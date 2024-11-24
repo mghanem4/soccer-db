@@ -1,27 +1,39 @@
 import React from 'react';
+import { Player } from '../api';
+import { Card, CardContent, Typography, Grid } from '@mui/material';
 
-interface Player {
-  id: number;
-  name: string;
-  team: string;
+interface PlayerListProps {
+  players: Player[];
 }
 
-const players: Player[] = [
-  { id: 1, name: "Lionel Messi", team: "Inter Miami" },
-  { id: 2, name: "Cristiano Ronaldo", team: "Al-Nassr" },
-];
-
-const PlayerList: React.FC = () => {
+const PlayerList: React.FC<PlayerListProps> = ({ players }) => {
   return (
     <div>
-      <h1>Player List</h1>
-      <ul>
+      <Typography variant="h5" gutterBottom>
+        Current Players
+      </Typography>
+      <Grid container spacing={2}>
         {players.map((player) => (
-          <li key={player.id}>
-            {player.name} - {player.team}
-          </li>
+          <Grid item xs={12} sm={6} md={4} key={player.player_id}>
+            <Card variant="outlined">
+              <CardContent>
+                <Typography variant="h6" component="div">
+                  {player.player_name}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  ID: {player.player_id}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Position: {player.position}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Country: {player.player_country}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
         ))}
-      </ul>
+      </Grid>
     </div>
   );
 };

@@ -1,0 +1,23 @@
+.selection-view {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+  }
+  
+  .dropdown-container {
+    margin: 20px 0;
+  }
+  
+  #action-select {
+    padding: 8px;
+    font-size: 16px;
+    width: 200px;
+  }
+  
+  h1 {
+    color: #333;
+  }
+  
+  h2 {
+    color: #555;
+  }
+  

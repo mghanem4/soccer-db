@@ -1,0 +1,21 @@
+.player-list {
+    margin-top: 20px;
+  }
+  
+  .player-list ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .player-list li {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    gap: 20px;
+  }
+  
+  .player-list li span {
+    display: inline-block;
+    width: auto;
+  }
+  
