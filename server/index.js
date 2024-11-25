@@ -33,7 +33,7 @@ const db = new sqlite3.Database('./database/soccer.db', (err) => {
 // Routes
 try {
   app.use('/players', require('./routes/players'));
-  // app.use('/teams', require('./routes/teams'));
+  app.use('/teams', require('./routes/teams'));
 } 
 catch (error) {
   console.error('Error loading routes:', error.message);
@@ -43,7 +43,6 @@ catch (error) {
 app.get('/', (req, res) => {
   res.send('Soccer database API is running.');
 });
-
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

@@ -4,7 +4,6 @@ import AddPlayerForm from './AddPlayerForm';
 import UpdatePlayerForm from './UpdatePlayerForm';
 import DeletePlayerForm from './DeletePlayerForm';
 import { getPlayers, Player } from '../api';
-import { Container, Typography, MenuItem, Select, FormControl, InputLabel, Box } from '@mui/material';
 
 const SelectionView: React.FC = () => {
   const [players, setPlayers] = useState<Player[]>([]); // Shared state for players
@@ -25,30 +24,44 @@ const SelectionView: React.FC = () => {
   }, []);
 
   return (
-    <Container maxWidth="md">
-      <Typography variant="h4" gutterBottom textAlign="center" sx={{ marginTop: '20px' }}>
-        Manage Players
-      </Typography>
+    <div style={{ fontFamily: 'Arial, sans-serif', padding: '20px' }}>
+      <h1>Soccer Player Manager</h1>
 
-      <FormControl fullWidth sx={{ marginY: 2 }}>
-        <InputLabel id="action-select-label">Choose an Action</InputLabel>
-        <Select
-          labelId="action-select-label"
+      {/* Dropdown menu for action selection */}
+      <div style={{ marginBottom: '20px' }}>
+        <label htmlFor="action-select" style={{ fontWeight: 'bold', marginRight: '10px' }}>
+          Select Action:
+        </label>
+        <select
+          id="action-select"
           value={selectedAction || ''}
           onChange={(e) => setSelectedAction(e.target.value)}
+          style={{
+            padding: '10px',
+            fontSize: '16px',
+            borderRadius: '5px',
+            border: '1px solid #ccc',
+          }}
         >
-          <MenuItem value="add">Add Player</MenuItem>
-          <MenuItem value="update">Update Player</MenuItem>
-          <MenuItem value="delete">Delete Player</MenuItem>
-        </Select>
-      </FormControl>
+          <option value="" disabled>
+            -- Select an Action --
+          </option>
+          <option value="add">Add Player</option>
+          <option value="update">Update Player</option>
+          <option value="delete">Delete Player</option>
+        </select>
+      </div>
 
+      {/* Show the current list of players */}
       <PlayerList players={players} />
 
-      {selectedAction === 'add' && <AddPlayerForm onPlayerChange={fetchPlayers} />}
-      {selectedAction === 'update' && <UpdatePlayerForm onPlayerChange={fetchPlayers} />}
-      {selectedAction === 'delete' && <DeletePlayerForm onPlayerChange={fetchPlayers} />}
-    </Container>
+      {/* Show forms based on the selected action */}
+      <div style={{ marginTop: '20px' }}>
+        {selectedAction === 'add' && <AddPlayerForm onPlayerChange={fetchPlayers} />}
+        {selectedAction === 'update' && <UpdatePlayerForm onPlayerChange={fetchPlayers} />}
+        {selectedAction === 'delete' && <DeletePlayerForm onPlayerChange={fetchPlayers} />}
+      </div>
+    </div>
   );
 };
 

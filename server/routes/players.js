@@ -46,22 +46,39 @@ router.post('/', (req, res) => {
 // Update a player
 router.put('/:id', (req, res) => {
   const { player_name, player_country, player_dob, contract, position } = req.body;
+
   const query = `
     UPDATE Players
-    SET player_name = ?, player_country = ?, player_dob = ?, contract = ?, position = ?
+    SET
+      player_name = COALESCE(?, player_name),
+      player_country = COALESCE(?, player_country),
+      player_dob = COALESCE(?, player_dob),
+      contract = COALESCE(?, contract),
+      position = COALESCE(?, position)
     WHERE player_id = ?
   `;
-  db.run(
-    query,
-    [player_name, player_country, player_dob, contract, position, req.params.id],
-    function (err) {
-      if (err) {
-        res.status(500).json({ error: err.message });
-        return;
-      }
-      res.json({ updated: this.changes });
+
+  const params = [
+    player_name || null,
+    player_country || null,
+    player_dob || null,
+    contract || null,
+    position || null,
+    req.params.id,
+  ];
+
+  db.run(query, params, function (err) {
+    if (err) {
+      console.error('Database error:', err.message);
+      return res.status(500).json({ error: 'Failed to update player.' });
     }
-  );
+
+    if (this.changes === 0) {
+      return res.status(404).json({ error: 'Player not found.' });
+    }
+
+    res.json({ message: 'Player updated successfully.' });
+  });
 });
 
 // Delete a player

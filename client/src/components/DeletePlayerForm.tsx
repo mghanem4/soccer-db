@@ -11,13 +11,11 @@ const DeletePlayerForm: React.FC<DeletePlayerFormProps> = ({ onPlayerChange }) =
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     // Ensure playerId is valid
     if (playerId === '') {
       alert('Player ID is required.');
       return;
     }
-
     try {
       await deletePlayer(playerId);
       alert('Player deleted successfully!');

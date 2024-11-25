@@ -3,11 +3,11 @@ import { updatePlayer } from '../api';
 import { TextField, Button, Box, Typography } from '@mui/material';
 
 interface UpdatePlayerFormProps {
-  onPlayerChange: () => void;
+  onPlayerChange: () => void; // Callback to refresh the player list
 }
 
 const UpdatePlayerForm: React.FC<UpdatePlayerFormProps> = ({ onPlayerChange }) => {
-  const [playerId, setPlayerId] = useState<number | ''>('');
+  const [playerId, setPlayerId] = useState<number | ''>(''); // Player ID to update
   const [playerName, setPlayerName] = useState('');
   const [playerCountry, setPlayerCountry] = useState('');
   const [playerDob, setPlayerDob] = useState('');
@@ -25,14 +25,14 @@ const UpdatePlayerForm: React.FC<UpdatePlayerFormProps> = ({ onPlayerChange }) =
 
     try {
       await updatePlayer(playerId, {
-        player_name: playerName || undefined,
-        player_country: playerCountry || undefined,
-        player_dob: playerDob || undefined,
-        contract: contract || undefined,
-        position: position || undefined,
+        player_name: playerName || null,
+        player_country: playerCountry || null,
+        player_dob: playerDob || null,
+        contract: contract || null,
+        position: position || null,
       });
       alert('Player updated successfully!');
-      onPlayerChange(); // Refresh player list
+      onPlayerChange(); // Refresh the player list
     } catch (error) {
       console.error('Error updating player:', error);
       alert('Failed to update player.');
