@@ -46,6 +46,41 @@ export interface NewTeam {
   goals_scored: number;
 }
 
+// Define the League type
+export interface League {
+  league_id: number; // Primary key
+  total_matches: number;
+  total_teams: number;
+  prize: number;
+  league_name: string;
+}
+
+// Define the League payload for adding/updating
+export interface NewLeague {
+  total_matches: number;
+  total_teams: number;
+  prize?: number;
+  league_name: string;
+}
+
+// Define the Manager type
+export interface Manager {
+  manager_id: number;
+  manager_name: string;
+  manager_dob: string;
+  // age: number | null;
+  manager_country: string;
+}
+
+// Define the Manager payload for adding/updating
+export interface NewManager {
+  manager_name: string;
+  manager_dob: string;
+  // age?: number;
+  manager_country: string;
+}
+
+
 // ----------------- Player CRUD -----------------
 
 // Fetch all players
@@ -139,4 +174,97 @@ export const deleteTeam = async (id: number): Promise<void> => {
       }
 }
 
-    
+
+// ----------------- Leagues CRUD -----------------
+
+
+// Fetch all leagues
+export const getLeagues = async (): Promise<League[]> => {
+  try {
+    const response = await axios.get<League[]>(`${API_BASE_URL}/leagues`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching leagues:', error);
+    throw error;
+  }
+};
+
+// Add a new league
+export const addLeague = async (league: NewLeague): Promise<void> => {
+  try {
+    await axios.post(`${API_BASE_URL}/leagues`, league);
+  } catch (error) {
+    console.error('Error adding league:', error);
+    throw error;
+  }
+};
+
+// UpdateLeague function
+export const updateLeague = async (
+  id: number,
+  league: Partial<League> // Allow undefined values
+): Promise<void> => {
+  try {
+    await axios.put(`${API_BASE_URL}/leagues/${id}`, league);
+  } catch (error) {
+    console.error('Error updating league:', error);
+    throw error;
+  }
+};
+
+
+// Delete a league
+export const deleteLeague = async (id: number): Promise<void> => {
+  try {
+    await axios.delete(`${API_BASE_URL}/leagues/${id}`);
+  } catch (error) {
+    console.error('Error deleting league:', error);
+    throw error;
+  }
+};
+
+
+// ----------------- Managers CRUD -----------------
+
+
+
+// Fetch all managers
+export const getManagers = async (): Promise<Manager[]> => {
+  try {
+    const response = await axios.get<Manager[]>(`${API_BASE_URL}/managers`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching managers:', error);
+    throw error;
+  }
+};
+
+// Add a new manager
+export const addManager = async (manager: NewManager): Promise<void> => {
+  try {
+    await axios.post(`${API_BASE_URL}/managers`, manager);
+  } catch (error) {
+    console.error('Error adding manager:', error);
+    throw error;
+  }
+};
+
+// Update a manager
+export const updateManager = async (id: number, manager: Partial<Manager>): Promise<void> => {
+  try {
+    await axios.put(`${API_BASE_URL}/managers/${id}`, manager);
+  } catch (error) {
+    console.error('Error updating manager:', error);
+    throw error;
+  }
+};
+
+// Delete a manager
+export const deleteManager = async (id: number): Promise<void> => {
+  try {
+    await axios.delete(`${API_BASE_URL}/managers/${id}`);
+  } catch (error) {
+    console.error('Error deleting manager:', error);
+    throw error;
+  }
+};

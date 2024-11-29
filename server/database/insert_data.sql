@@ -30,7 +30,7 @@ INSERT INTO Player_Team (player_id, team_id, player_team_goals, player_team_expe
 (5, 5, 20, 18.5, 18);  -- De Bruyne at Bayern Munich
 
 
-INSERT INTO League_Team (league_id, team_id, is_participating) VALUES
+INSERT INTO Team_league (league_id, team_id, is_participating) VALUES
 (1, 1, 1),  -- FC Barcelona in La Liga
 (1, 2, 1),  -- Real Madrid in La Liga
 (5, 3, 1),  -- Paris Saint-Germain in Ligue 1

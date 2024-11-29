@@ -1,6 +1,15 @@
 -- Create Players Table
 
 BEGIN TRANSACTION;
+DROP TABLE IF EXISTS Players;
+DROP TABLE IF EXISTS Managers;
+DROP TABLE IF EXISTS Teams;
+DROP TABLE IF EXISTS Leagues;
+DROP TABLE IF EXISTS Player_Team;
+DROP TABLE IF EXISTS Team_league;
+DROP TABLE IF EXISTS League_Team;
+DROP TABLE IF EXISTS Manager_Team;
+
 
 CREATE TABLE Players (
     player_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -57,7 +66,7 @@ CREATE TABLE Player_Team (
 );
 
 -- Create League-Team Junction Table
-CREATE TABLE League_Team (
+CREATE TABLE Team_league (
     league_id INTEGER NOT NULL,
     team_id INTEGER NOT NULL,
     is_participating BOOLEAN DEFAULT 1,

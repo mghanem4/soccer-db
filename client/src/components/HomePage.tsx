@@ -2,6 +2,10 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Container, Typography, Box } from '@mui/material';
 
+import { createTheme } from '@mui/material/styles';
+
+
+
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
 
@@ -27,10 +31,32 @@ const HomePage: React.FC = () => {
           variant="contained"
           color="secondary"
           fullWidth
+          sx={{ mb: 2 }}
+
           onClick={() => navigate('/team-crud')}
         >
           Team CRUD (Create, Read, Update, Delete)
         </Button>
+
+        <Button
+          variant="contained"
+          color="success"
+          fullWidth
+          sx={{ mb: 2 }}
+          onClick={() => navigate('/league-crud')}
+        >
+          League CRUD (Create, Read, Update, Delete)
+        </Button>
+
+        <Button
+          variant="contained"
+          color="info"
+          fullWidth
+          onClick={() => navigate('/manager-crud')}
+        >
+          Manager CRUD (Create, Read, Update, Delete)
+        </Button>
+
       </Box>
     </Container>
   );

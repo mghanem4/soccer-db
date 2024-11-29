@@ -4,6 +4,10 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const sqlite3 = require('sqlite3').verbose();
 const fs = require('fs');
+// const leaguesRoutes = require('./routes/leagues');
+// const teamsRoutes = require('./routes/teams');
+// const playersRoutes = require('./routes/players');
+
 
 // Load environment variables
 dotenv.config();
@@ -20,6 +24,9 @@ console.log('Database file exists:', fs.existsSync('./database/soccer.db'));
 console.log('Routes folder exists:', fs.existsSync('./routes'));
 console.log('Players route exists:', fs.existsSync('./routes/players.js'));
 console.log('Teams route exists:', fs.existsSync('./routes/teams.js'));
+console.log('Managers route exists:', fs.existsSync('./routes/managers.js'));
+console.log('League route exists:', fs.existsSync('./routes/leagues.js'));
+
 
 // Connect to SQLite database
 const db = new sqlite3.Database('./database/soccer.db', (err) => {
@@ -34,6 +41,10 @@ const db = new sqlite3.Database('./database/soccer.db', (err) => {
 try {
   app.use('/players', require('./routes/players'));
   app.use('/teams', require('./routes/teams'));
+  app.use('/leagues', require('./routes/leagues'));
+  app.use('/managers', require('./routes/managers'));
+
+
 } 
 catch (error) {
   console.error('Error loading routes:', error.message);
