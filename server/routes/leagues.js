@@ -15,8 +15,7 @@ router.get('/:id/teams', (req, res) => {
         team_wins,
         team_draws,
         team_loses,
-        season_year,
-        is_participating
+        titles_won
     FROM
         (SELECT * FROM Teams NATURAL JOIN Team_league)
     NATURAL JOIN

@@ -50,7 +50,7 @@ const LeagueStatsPage: React.FC = () => {
     { id: 'team_wins' as keyof Team, label: 'Wins' },
     { id: 'team_draws' as keyof Team, label: 'Draws' },
     { id: 'team_loses' as keyof Team, label: 'Losses' },
-    { id: 'season_year' as keyof Team, label: 'Season Year' },
+    { id: 'titles_won' as keyof Team, label: 'Titles Won' },
   ];
 
   const filterByLeague = (league: League, query: string) => {

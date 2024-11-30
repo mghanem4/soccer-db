@@ -41,6 +41,14 @@ const AddLeagueForm: React.FC<AddLeagueFormProps> = ({ onLeagueChange }) => {
         Add League
       </Typography>
       <TextField
+        label="League Name"
+        fullWidth
+        margin="normal"
+        value={leagueName}
+        onChange={(e) => setLeagueName(e.target.value)}
+        required
+      />
+      <TextField
         label="Total Matches"
         fullWidth
         margin="normal"
@@ -66,14 +74,7 @@ const AddLeagueForm: React.FC<AddLeagueFormProps> = ({ onLeagueChange }) => {
         value={prize}
         onChange={(e) => setPrize(Number(e.target.value))}
       />
-      <TextField
-        label="League Name"
-        fullWidth
-        margin="normal"
-        value={leagueName}
-        onChange={(e) => setLeagueName(e.target.value)}
-        required
-      />
+
       <Button variant="contained" color="primary" type="submit" sx={{ mt: 2 }}>
         Add League
       </Button>

@@ -9,6 +9,8 @@ DROP TABLE IF EXISTS Player_Team;
 DROP TABLE IF EXISTS Team_league;
 DROP TABLE IF EXISTS League_Team;
 DROP TABLE IF EXISTS Manager_Team;
+DROP TABLE IF EXISTS Player_Attributes;
+
 
 
 CREATE TABLE Players (
@@ -84,8 +86,7 @@ CREATE TABLE Player_Team (
 CREATE TABLE Team_league (
     league_id INTEGER NOT NULL,
     team_id INTEGER NOT NULL,
-    is_participating BOOLEAN DEFAULT 1,
-    season_year INTEGER NOT NULL,
+    titles_won INTEGER NOT NULL,
     PRIMARY KEY (league_id, team_id),
     FOREIGN KEY (league_id) REFERENCES Leagues(league_id),
     FOREIGN KEY (team_id) REFERENCES Teams(team_id)

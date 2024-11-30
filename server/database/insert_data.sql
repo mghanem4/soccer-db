@@ -37,12 +37,12 @@ VALUES
 (5, 5, '2015-08-30', '2023-05-10', 20, 18.5, 18);  -- De Bruyne at Bayern Munich
 
 
-INSERT INTO Team_league (league_id, team_id, is_participating, season_year) VALUES
-(1, 1, 1,2020),  -- FC Barcelona in La Liga
-(1, 2, 1,2022),  -- Real Madrid in La Liga
-(5, 3, 1,2023),  -- Paris Saint-Germain in Ligue 1
-(2, 4, 1,2024),  -- Manchester City in Premier League
-(3, 5, 1,2021);  -- Bayern Munich in Bundesliga
+INSERT INTO Team_league (league_id, team_id, titles_won) VALUES
+(1, 1, 32),  -- FC Barcelona in La Liga
+(1, 2, 36),  -- Real Madrid in La Liga
+(5, 3, 30),  -- Paris Saint-Germain in Ligue 1
+(2, 4, 10),  -- Manchester City in Premier League
+(3, 5, 31);  -- Bayern Munich in Bundesliga
 
 INSERT INTO Manager_Team (manager_id, team_id, start_date, end_date) 
 VALUES
