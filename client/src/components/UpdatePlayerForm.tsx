@@ -10,13 +10,12 @@ const UpdatePlayerForm: React.FC<UpdatePlayerFormProps> = ({ onPlayerChange }) =
   const [playerId, setPlayerId] = useState<number | ''>(''); // Player ID to update
   const [playerName, setPlayerName] = useState('');
   const [playerCountry, setPlayerCountry] = useState('');
-  const [playerDob, setPlayerDob] = useState('');
+  const [playerAge, setPlayerAge] = useState(0);
   const [contract, setContract] = useState('');
   const [position, setPosition] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     // Ensure playerId is valid
     if (playerId === '') {
       alert('Player ID is required.');
@@ -27,7 +26,7 @@ const UpdatePlayerForm: React.FC<UpdatePlayerFormProps> = ({ onPlayerChange }) =
       await updatePlayer(playerId, {
         player_name: playerName || null,
         player_country: playerCountry || null,
-        player_dob: playerDob || null,
+        age: playerAge === 0 ? undefined : playerAge,        
         contract: contract || null,
         position: position || null,
       });
@@ -68,13 +67,12 @@ const UpdatePlayerForm: React.FC<UpdatePlayerFormProps> = ({ onPlayerChange }) =
         onChange={(e) => setPlayerCountry(e.target.value)}
       />
       <TextField
-        label="Date of Birth"
+        label="Player Age"
         fullWidth
         margin="normal"
-        type="date"
-        InputLabelProps={{ shrink: true }}
-        value={playerDob}
-        onChange={(e) => setPlayerDob(e.target.value)}
+        type="number"
+        value={playerAge}
+        onChange={(e) => setPlayerAge(Number(e.target.value))}
       />
       <TextField
         label="Contract"

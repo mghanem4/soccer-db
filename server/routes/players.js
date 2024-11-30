@@ -1,4 +1,3 @@
-// routes/players.js
 const express = require('express');
 const db = require('../db');
 const router = express.Router();
@@ -15,26 +14,49 @@ router.get('/', (req, res) => {
   });
 });
 
-// Get a player by ID
+// Get a player by ID (including attributes)
 router.get('/:id', (req, res) => {
-  const query = 'SELECT * FROM Players WHERE player_id = ?';
-  db.get(query, [req.params.id], (err, row) => {
+  const playerQuery = 'SELECT * FROM Players WHERE player_id = ?';
+  const attributesQuery = `
+    SELECT * FROM Player_Attributes 
+    WHERE player_id = ?
+  `;
+
+  // Fetch player data
+  db.get(playerQuery, [req.params.id], (err, player) => {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
     }
-    res.json(row);
+
+    if (!player) {
+      res.status(404).json({ error: 'Player not found.' });
+      return;
+    }
+
+    // Fetch player attributes
+    db.all(attributesQuery, [req.params.id], (err, attributes) => {
+      if (err) {
+        res.status(500).json({ error: err.message });
+        return;
+      }
+
+      res.json({
+        player,
+        attributes,
+      });
+    });
   });
 });
 
 // Add a new player
 router.post('/', (req, res) => {
-  const { player_name, player_country, player_dob, contract, position } = req.body;
+  const { player_name, player_country, age, contract, position } = req.body;
   const query = `
-    INSERT INTO Players (player_name, player_country, player_dob, contract, position)
+    INSERT INTO Players (player_name, player_country, age, contract, position)
     VALUES (?, ?, ?, ?, ?)
   `;
-  db.run(query, [player_name, player_country, player_dob, contract, position], function (err) {
+  db.run(query, [player_name, player_country, age, contract, position], function (err) {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
@@ -45,14 +67,14 @@ router.post('/', (req, res) => {
 
 // Update a player
 router.put('/:id', (req, res) => {
-  const { player_name, player_country, player_dob, contract, position } = req.body;
+  const { player_name, player_country, age, contract, position } = req.body;
 
   const query = `
     UPDATE Players
     SET
       player_name = COALESCE(?, player_name),
       player_country = COALESCE(?, player_country),
-      player_dob = COALESCE(?, player_dob),
+      age = COALESCE(?, age),
       contract = COALESCE(?, contract),
       position = COALESCE(?, position)
     WHERE player_id = ?
@@ -61,7 +83,7 @@ router.put('/:id', (req, res) => {
   const params = [
     player_name || null,
     player_country || null,
-    player_dob || null,
+    age || null,
     contract || null,
     position || null,
     req.params.id,

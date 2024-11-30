@@ -2,6 +2,37 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 
+
+// Get teams in a specific league
+router.get('/:id/teams', (req, res) => {
+  const query = `
+    SELECT
+        team_name,
+        league_name,
+        team_id,
+        league_id,
+        total_matches,
+        team_wins,
+        team_draws,
+        team_loses,
+        season_year,
+        is_participating
+    FROM
+        (SELECT * FROM Teams NATURAL JOIN Team_league)
+    NATURAL JOIN
+        Leagues
+    WHERE league_id = ?
+  `;
+
+  db.all(query, [req.params.id], (err, rows) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.json(rows);
+  });
+});
+
 // Get all leagues
 router.get('/', (req, res) => {
   const query = 'SELECT * FROM Leagues';

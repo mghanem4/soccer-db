@@ -5,6 +5,8 @@ import TeamCrud from './components/TeamCrud';
 import PlayerCrud from './components/PlayerCrud';
 import LeagueCrud from './components/LeagueCrud';
 import ManagerCrud from './components/ManagerCrud';
+import PlayerStatsPage from './components/PlayerStatsPage';
+import LeagueStatsPage from './components/LeagueStatsPage';
 
 
 
@@ -27,6 +29,11 @@ function App() {
         <Route path="/league-crud" element={<LeagueCrud />} />
 
         <Route path="/manager-crud" element={<ManagerCrud />} />
+
+        <Route path="/player-stats" element={<PlayerStatsPage />} />
+
+
+        <Route path="/league-stats" element={<LeagueStatsPage />} />
 
 
       </Routes>

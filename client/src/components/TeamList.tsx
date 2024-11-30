@@ -1,50 +1,35 @@
 import React from 'react';
+import ScrollableTable from './ScrollableTable';
 import { Team } from '../api';
-import { Card, CardContent, Typography, Grid } from '@mui/material';
 
-interface PlayerListProps {
+interface TeamListProps {
   teams: Team[];
 }
 
-const PlayerList: React.FC<PlayerListProps> = ({ teams }) => {
+const TeamList: React.FC<TeamListProps> = ({ teams }) => {
+  const columns = [
+    { id: 'team_id' as keyof Team, label: 'ID' },
+    { id: 'team_name' as keyof Team, label: 'Name' },
+    { id: 'team_wins' as keyof Team, label: 'Wins' },
+    { id: 'team_draws' as keyof Team, label: 'Draws' },
+    { id: 'team_loses' as keyof Team, label: 'Losses' },
+    { id: 'goals_scored' as keyof Team, label: 'Goals Scored' },
+    { id: 'team_trophies' as keyof Team, label: 'Trophies' },
+  ];
+
+  const filterBy = (team: Team, query: string) => {
+    const nameMatches = team.team_name?.toLowerCase().includes(query) || false;
+    const idMatches = team.team_id.toString().includes(query);
+    return nameMatches || idMatches;
+  };
+
   return (
-    <div>
-      <Typography variant="h5" gutterBottom>
-        Current Teams
-      </Typography>
-      <Grid container spacing={2}>
-        {teams.map((teams) => (
-          <Grid item xs={12} sm={6} md={4} key={teams.team_id}>
-            <Card variant="outlined">
-              <CardContent>
-                <Typography variant="h6" component="div">
-                  {teams.team_name}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Team ID: {teams.team_id}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Team wins: {teams.team_wins}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Team losses: {teams.team_loses}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Team Draws: {teams.team_draws}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Team Trophies: {teams.team_trophies}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Team total goals: {teams.goals_scored}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-    </div>
+    <ScrollableTable<Team>
+      data={teams}
+      columns={columns}
+      filterBy={filterBy}
+    />
   );
 };
 
-export default PlayerList;
+export default TeamList;

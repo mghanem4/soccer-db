@@ -9,7 +9,7 @@ interface UpdateManagerFormProps {
 const UpdateManagerForm: React.FC<UpdateManagerFormProps> = ({ onManagerChange }) => {
   const [managerId, setManagerId] = useState<number | ''>(''); // Manager ID to update
   const [managerName, setManagerName] = useState('');
-  const [managerDob, setManagerDob] = useState('');
+  const [managerAge, setManagerAge] = useState(0);
   // const [age, setAge] = useState<number | ''>(''); // Optional
   const [managerCountry, setManagerCountry] = useState('');
 
@@ -24,7 +24,7 @@ const UpdateManagerForm: React.FC<UpdateManagerFormProps> = ({ onManagerChange }
     try {
       await updateManager(managerId, {
         manager_name: managerName || undefined,
-        manager_dob: managerDob || undefined,
+        age: managerAge || undefined,
         // age: age === '' ? undefined : age,
         manager_country: managerCountry || undefined,
       });
@@ -58,13 +58,12 @@ const UpdateManagerForm: React.FC<UpdateManagerFormProps> = ({ onManagerChange }
         onChange={(e) => setManagerName(e.target.value)}
       />
       <TextField
-        label="Date of Birth"
+        label="Manager Age"
         fullWidth
         margin="normal"
-        type="date"
-        InputLabelProps={{ shrink: true }}
-        value={managerDob}
-        onChange={(e) => setManagerDob(e.target.value)}
+        type="number"
+        value={managerAge}
+        onChange={(e) => setManagerAge(Number(e.target.value))}
       />
 
       <TextField

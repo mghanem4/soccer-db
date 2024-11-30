@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Container, Typography, Box } from '@mui/material';
 
-import { createTheme } from '@mui/material/styles';
+// import { createTheme } from '@mui/material/styles';
 
 
 
@@ -52,9 +52,30 @@ const HomePage: React.FC = () => {
           variant="contained"
           color="info"
           fullWidth
+          sx={{ mb: 2 }}
           onClick={() => navigate('/manager-crud')}
         >
           Manager CRUD (Create, Read, Update, Delete)
+        </Button>
+
+        <Button
+          variant="contained"
+          color="warning"
+          fullWidth
+          sx={{ mb: 2 }}
+          onClick={() => navigate('/player-stats')}
+        >
+          Player Stats 
+        </Button>
+
+        <Button
+          variant="contained"
+          color="warning"
+          fullWidth
+          sx={{ mb: 2 }}
+          onClick={() => navigate('/league-stats')}
+        >
+          League Stats 
         </Button>
 
       </Box>

@@ -1,43 +1,31 @@
 import React from 'react';
+import ScrollableTable from './ScrollableTable';
 import { Manager } from '../api';
-import { Card, CardContent, Typography, Grid } from '@mui/material';
 
 interface ManagerListProps {
   managers: Manager[];
 }
 
 const ManagerList: React.FC<ManagerListProps> = ({ managers }) => {
+  const columns = [
+    { id: 'manager_id' as keyof Manager, label: 'ID' },
+    { id: 'manager_name' as keyof Manager, label: 'Name' },
+    { id: 'age' as keyof Manager, label: 'Date of Birth' },
+    { id: 'manager_country' as keyof Manager, label: 'Country' },
+  ];
+
+  const filterBy = (manager: Manager, query: string) => {
+    const nameMatches = manager.manager_name.toLowerCase().includes(query);
+    const idMatches = manager.manager_id.toString().includes(query);
+    return nameMatches || idMatches;
+  };
+  
   return (
-    <div>
-      <Typography variant="h5" gutterBottom>
-        Current Managers
-      </Typography>
-      <Grid container spacing={2}>
-        {managers.map((manager) => (
-          <Grid item xs={12} sm={6} md={4} key={manager.manager_id}>
-            <Card variant="outlined">
-              <CardContent>
-                <Typography variant="h6" component="div">
-                  {manager.manager_name}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Manager ID: {manager.manager_id}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Date of Birth: {manager.manager_dob}
-                </Typography>
-                {/* <Typography variant="body2" color="text.secondary">
-                  Age: {manager.age || 'Not Specified'}
-                </Typography> */}
-                <Typography variant="body2" color="text.secondary">
-                  Country: {manager.manager_country}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-    </div>
+    <ScrollableTable<Manager>
+      data={managers}
+      columns={columns}
+      filterBy={filterBy}
+    />
   );
 };
 

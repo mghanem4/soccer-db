@@ -8,14 +8,14 @@ interface AddManagerFormProps {
 
 const AddManagerForm: React.FC<AddManagerFormProps> = ({ onManagerChange }) => {
   const [managerName, setManagerName] = useState('');
-  const [managerDob, setManagerDob] = useState('');
+  const [managerAge, setManagerAge] = useState(0);
   // const [age, setAge] = useState<number | ''>('');
   const [managerCountry, setManagerCountry] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!managerName || !managerDob || !managerCountry) {
+    if (!managerName || !managerAge || !managerCountry) {
       alert('Manager name, date of birth, and country are required.');
       return;
     }
@@ -23,7 +23,7 @@ const AddManagerForm: React.FC<AddManagerFormProps> = ({ onManagerChange }) => {
     try {
       await addManager({
         manager_name: managerName,
-        manager_dob: managerDob,
+        age: managerAge,
         // age: age === '' ? undefined : Number(age),
         manager_country: managerCountry,
       });
@@ -49,14 +49,12 @@ const AddManagerForm: React.FC<AddManagerFormProps> = ({ onManagerChange }) => {
         required
       />
       <TextField
-        label="Date of Birth"
+        label="Manager Age"
         fullWidth
         margin="normal"
-        type="date"
-        InputLabelProps={{ shrink: true }}
-        value={managerDob}
-        onChange={(e) => setManagerDob(e.target.value)}
-        required
+        type="number"
+        value={managerAge}
+        onChange={(e) => setManagerAge(Number(e.target.value))}
       />
 
       <TextField

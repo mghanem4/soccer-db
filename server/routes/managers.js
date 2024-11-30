@@ -17,17 +17,17 @@ router.get('/', (req, res) => {
 
 // Add a manager
 router.post('/', (req, res) => {
-  const { manager_name, manager_dob, manager_country } = req.body;
+  const { manager_name, age, manager_country } = req.body;
 
-  if (!manager_name || !manager_dob || !manager_country) {
-    return res.status(400).json({ error: 'manager_name, manager_dob, and manager_country are required.' });
+  if (!manager_name || !age || !manager_country) {
+    return res.status(400).json({ error: 'manager_name, age, and manager_country are required.' });
   }
 
   const query = `
-    INSERT INTO Managers (manager_name, manager_dob, manager_country)
+    INSERT INTO Managers (manager_name, age, manager_country)
     VALUES (?, ?, ?)
   `;
-  const params = [manager_name, manager_dob, manager_country];
+  const params = [manager_name, age, manager_country];
 
   db.run(query, params, function (err) {
     if (err) {
@@ -41,19 +41,19 @@ router.post('/', (req, res) => {
 
 // Update a manager
 router.put('/:id', (req, res) => {
-  const { manager_name, manager_dob, age, manager_country } = req.body;
+  const { manager_name, age, manager_country } = req.body;
 
   const query = `
     UPDATE Managers
     SET
       manager_name = COALESCE(?, manager_name),
-      manager_dob = COALESCE(?, manager_dob),
+      age = COALESCE(?, age),
       manager_country = COALESCE(?, manager_country)
     WHERE manager_id = ?
   `;
   const params = [
     manager_name || null,
-    manager_dob || null,
+    age || null,
     manager_country || null,
     req.params.id,
   ];

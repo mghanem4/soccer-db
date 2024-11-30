@@ -2,7 +2,7 @@ import React from 'react';
 import { Container, Typography } from '@mui/material';
 import ManagerSelectionView from './ManagerSelectionView';
 
-const PlayerCrud: React.FC = () => {
+const ManagerCrud: React.FC = () => {
   return (
     <Container maxWidth="md" sx={{ mt: 5 }}>
       <Typography variant="h4" gutterBottom>
@@ -13,4 +13,6 @@ const PlayerCrud: React.FC = () => {
   );
 };
 
-export default PlayerCrud;
+export default ManagerCrud;
+
+

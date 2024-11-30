@@ -3,6 +3,7 @@ import { getLeagues, League } from '../api';
 import AddLeagueForm from './AddLeagueForm';
 import UpdateLeagueForm from './UpdateLeagueForm';
 import DeleteLeagueForm from './DeleteLeagueForm';
+import LeagueList from './LeagueList';
 import { Container, Typography, MenuItem, Select, FormControl, InputLabel, Box } from '@mui/material';
 
 const LeagueSelectionView: React.FC = () => {
@@ -42,17 +43,8 @@ const LeagueSelectionView: React.FC = () => {
         </Select>
       </FormControl>
 
-      {/* Display the list of leagues */}
-      <Box sx={{ marginBottom: 2 }}>
-        <Typography variant="h5" gutterBottom>
-          Current Leagues
-        </Typography>
-        {leagues.map((league) => (
-          <Typography key={league.league_id}>
-            {league.league_id}. {league.league_name} - Matches: {league.total_matches}, Teams: {league.total_teams}, Prize: ${league.prize}
-          </Typography>
-        ))}
-      </Box>
+      <LeagueList leagues={leagues} />
+
 
       {/* Render the appropriate form based on the selected action */}
       {selectedAction === 'add' && <AddLeagueForm onLeagueChange={fetchLeagues} />}

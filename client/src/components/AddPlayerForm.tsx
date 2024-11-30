@@ -9,7 +9,7 @@ interface AddPlayerFormProps {
 const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onPlayerChange }) => {
   const [playerName, setPlayerName] = useState('');
   const [playerCountry, setPlayerCountry] = useState('');
-  const [playerDob, setPlayerDob] = useState('');
+  const [playerAge, setPlayerAge] = useState(0);
   const [contract, setContract] = useState('');
   const [position, setPosition] = useState('');
 
@@ -19,7 +19,7 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onPlayerChange }) => {
       await addPlayer({
         player_name: playerName,
         player_country: playerCountry,
-        player_dob: playerDob,
+        age: playerAge,
         contract,
         position,
       });
@@ -53,14 +53,12 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onPlayerChange }) => {
         required
       />
       <TextField
-        label="Date of Birth"
+        label="Player Age"
         fullWidth
         margin="normal"
-        type="date"
-        InputLabelProps={{ shrink: true }}
-        value={playerDob}
-        onChange={(e) => setPlayerDob(e.target.value)}
-        required
+        type="number"
+        value={playerAge}
+        onChange={(e) => setPlayerAge(Number(e.target.value))}
       />
       <TextField
         label="Contract"

@@ -7,10 +7,10 @@ const API_BASE_URL = 'http://localhost:5000';
 
 // Define the type of a player retrieved from the database
 export interface Player {
-  player_id: number | null; // This is included for fetched data
+  player_id: number; // This is included for fetched data
   player_name: string | null;
   player_country: string | null;
-  player_dob: string | null;
+  age: number;
   contract: string | null;
   position: string | null;
 }
@@ -19,7 +19,7 @@ export interface Player {
 export interface NewPlayer {
   player_name: string;
   player_country: string;
-  player_dob: string;
+  age: number;
   contract: string;
   position: string;
 }
@@ -67,7 +67,7 @@ export interface NewLeague {
 export interface Manager {
   manager_id: number;
   manager_name: string;
-  manager_dob: string;
+  age: number | null;
   // age: number | null;
   manager_country: string;
 }
@@ -75,7 +75,7 @@ export interface Manager {
 // Define the Manager payload for adding/updating
 export interface NewManager {
   manager_name: string;
-  manager_dob: string;
+  age: number | null;
   // age?: number;
   manager_country: string;
 }
@@ -268,3 +268,31 @@ export const deleteManager = async (id: number): Promise<void> => {
     throw error;
   }
 };
+export const getPlayerById = async (id: number) => {
+  try {
+    const response = await axios.get<{ player: Player; attributes: any[] }>(`${API_BASE_URL}/players/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching player by ID:', error);
+    throw error;
+  }
+};
+
+// Fetch teams by league
+export const getTeamsByLeague = async (leagueId: number): Promise<Team[]> => {
+  try {
+    const response = await axios.get<Team[]>(`${API_BASE_URL}/leagues/${leagueId}/teams`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching teams by league:', error);
+    throw error;
+  }
+};
+
+
+
+
+
+
+
+

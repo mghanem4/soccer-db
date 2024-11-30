@@ -3,6 +3,7 @@ import { getManagers, Manager } from '../api';
 import AddManagerForm from './AddManagerForm';
 import UpdateManagerForm from './UpdateManagerForm';
 import DeleteManagerForm from './DeleteManagerForm';
+import ManagerList from './ManagerList';
 import { Container, Typography, MenuItem, Select, FormControl, InputLabel, Box } from '@mui/material';
 
 const ManagerSelectionView: React.FC = () => {
@@ -41,18 +42,8 @@ const ManagerSelectionView: React.FC = () => {
           <MenuItem value="delete">Delete Manager</MenuItem>
         </Select>
       </FormControl>
-
-      {/* Display the list of managers */}
-      <Box sx={{ marginBottom: 2 }}>
-        <Typography variant="h5" gutterBottom>
-          Current Managers
-        </Typography>
-        {managers.map((manager) => (
-          <Typography key={manager.manager_id}>
-            {manager.manager_id}. {manager.manager_name} - DOB: {manager.manager_dob}, Country: {manager.manager_country}
-          </Typography>
-        ))}
-      </Box>
+      <ManagerList managers={managers} />
+      
 
       {/* Render the appropriate form based on the selected action */}
       {selectedAction === 'add' && <AddManagerForm onManagerChange={fetchManagers} />}

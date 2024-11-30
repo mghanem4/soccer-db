@@ -16,7 +16,7 @@ CREATE TABLE Players (
     player_name TEXT NOT NULL,
     player_country TEXT NOT NULL,
     player_injuries INTEGER DEFAULT 0,
-    player_dob DATE NOT NULL,
+    age INTEGER NOT NULL,
     contract TEXT DEFAULT NULL,
     player_trophies INTEGER DEFAULT 0,
     position TEXT NOT NULL
@@ -27,9 +27,22 @@ CREATE TABLE Players (
 CREATE TABLE Managers (
     manager_id INTEGER PRIMARY KEY AUTOINCREMENT,
     manager_name TEXT NOT NULL,
-    manager_dob DATE NOT NULL,
+    age INTEGER NOT NULL,
     manager_country TEXT NOT NULL
 );
+
+CREATE TABLE Player_Attributes (
+    attribute_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    player_id INTEGER NOT NULL,
+    season_year INTEGER NOT NULL,
+    tackles_won INTEGER DEFAULT 0,
+    recoveries INTEGER DEFAULT 0,
+    aerial_duels_won INTEGER DEFAULT 0,
+    aerial_duels_lost INTEGER DEFAULT 0,
+    FOREIGN KEY (player_id) REFERENCES Players(player_id)
+);
+
+
 
 -- Create Teams Table
 CREATE TABLE Teams (
@@ -55,6 +68,8 @@ CREATE TABLE Leagues (
 CREATE TABLE Player_Team (
     player_id INTEGER NOT NULL,
     team_id INTEGER NOT NULL,
+    start_date DATE,
+    end_date DATE,
     player_team_goals INTEGER DEFAULT 0,
     player_matches INTEGER DEFAULT 0,
     player_team_expected_goals REAL DEFAULT 0,
@@ -70,6 +85,7 @@ CREATE TABLE Team_league (
     league_id INTEGER NOT NULL,
     team_id INTEGER NOT NULL,
     is_participating BOOLEAN DEFAULT 1,
+    season_year INTEGER NOT NULL,
     PRIMARY KEY (league_id, team_id),
     FOREIGN KEY (league_id) REFERENCES Leagues(league_id),
     FOREIGN KEY (team_id) REFERENCES Teams(team_id)
@@ -79,6 +95,8 @@ CREATE TABLE Team_league (
 CREATE TABLE Manager_Team (
     manager_id INTEGER NOT NULL,
     team_id INTEGER NOT NULL,
+    start_date DATE,
+    end_date DATE,
     PRIMARY KEY (manager_id, team_id),
     FOREIGN KEY (manager_id) REFERENCES Managers(manager_id),
     FOREIGN KEY (team_id) REFERENCES Teams(team_id)
