@@ -101,6 +101,21 @@ const HomePage: React.FC = () => {
         >
           Query Pages 
         </Button>
+        {/* <Typography variant="body1" gutterBottom>
+        Choose an option to view database related things.
+      </Typography>
+
+      
+      <Button
+          variant="contained"
+          color="warning"
+          fullWidth
+          sx={{ mb: 2 }}
+          onClick={() => navigate('/er-model')}
+        >
+          ER Model 
+        </Button> */}
+
 
       </Box>
     </Container>

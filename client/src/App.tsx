@@ -42,6 +42,9 @@ function App() {
 
         <Route path="/query-page" element={<QueryButtonsPage />} />
 
+        {/* <Route path="/er-model" element={<HomePage/>} /> */}
+
+
 
       </Routes>
 
