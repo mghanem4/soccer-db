@@ -139,7 +139,7 @@ export const updatePlayer = async (
   }
 };
 
-// Delete a player
+// Delete a player and remove them from Player_Team if present
 export const deletePlayer = async (id: number): Promise<void> => {
   try {
     await axios.delete(`${API_BASE_URL}/players/${id}`);
@@ -325,16 +325,46 @@ export const getPlayersByTeam = async (teamId: number): Promise<Player[]> => {
   }
 };
 
-// Fetch player stats by player ID
 export const getPlayerStats = async (playerId: number): Promise<any> => {
   try {
     const response = await axios.get(`${API_BASE_URL}/players/${playerId}/stats`);
-    return response.data;
+    return response.data.stats;
   } catch (error) {
     console.error('Error fetching player stats:', error);
     throw error;
   }
 };
+export const addPlayerToTeam = async (playerId: number, teamId: number, startDate: string): Promise<void> => {
+  try {
+    await axios.post(`${API_BASE_URL}/player-team`, {
+      player_id: playerId,
+      team_id: teamId,
+      start_date: startDate,
+    });
+  } catch (error) {
+    console.error('Error adding player to team:', error);
+    throw error;
+  }
+};
+
+export const updatePlayerTeam = async (
+  playerId: number,
+  teamId: number,
+  startDate?: string,
+  endDate?: string
+): Promise<void> => {
+  try {
+    await axios.put(`${API_BASE_URL}/players/${playerId}/team`, {
+      team_id: teamId,
+      start_date: startDate,
+      end_date: endDate,
+    });
+  } catch (error) {
+    console.error('Error updating player team:', error);
+    throw error;
+  }
+};
+
 
 export const getLeagueTrophies = async (): Promise<Trophy[]> => {
   try {

@@ -19,7 +19,7 @@ const DeletePlayerForm: React.FC<DeletePlayerFormProps> = ({ onPlayerChange }) =
 
     try {
       // Step 1: Delete the player's trophies
-      await deletePlayerTrophies(Number(playerId));
+      // await deletePlayerTrophies(Number(playerId));
 
       // Step 2: Delete the player from the Players table
       await deletePlayer(Number(playerId));

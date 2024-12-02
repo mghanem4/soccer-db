@@ -1,14 +1,33 @@
 import React, { useState } from 'react';
-import { updatePlayer, assignPlayerTrophy, stripPlayerTrophy } from '../api';
-import { TextField, Button, Box, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
-import { Trophy } from '../api';
+import {
+  updatePlayer,
+  updatePlayerTeam,
+  assignPlayerTrophy,
+  stripPlayerTrophy,
+} from '../api';
+import {
+  TextField,
+  Button,
+  Box,
+  Typography,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from '@mui/material';
+import { Trophy, Team } from '../api';
 
 interface UpdatePlayerFormProps {
   onPlayerChange: () => void; // Callback to refresh the player list
   trophies: Trophy[]; // List of available trophies
+  teams: Team[]; // List of available teams
 }
 
-const UpdatePlayerForm: React.FC<UpdatePlayerFormProps> = ({ onPlayerChange, trophies }) => {
+const UpdatePlayerForm: React.FC<UpdatePlayerFormProps> = ({
+  onPlayerChange,
+  trophies,
+  teams,
+}) => {
   const [playerId, setPlayerId] = useState<number | ''>(''); // Player ID to update
   const [playerName, setPlayerName] = useState('');
   const [playerCountry, setPlayerCountry] = useState('');
@@ -16,6 +35,9 @@ const UpdatePlayerForm: React.FC<UpdatePlayerFormProps> = ({ onPlayerChange, tro
   const [position, setPosition] = useState('');
   const [selectedTrophy, setSelectedTrophy] = useState<number | ''>(''); // Trophy to assign
   const [yearAwarded, setYearAwarded] = useState<number | ''>(''); // Year of trophy assignment
+  const [teamId, setTeamId] = useState<number | ''>(''); // Team to assign
+  const [startDate, setStartDate] = useState<string>(''); // Start date with the team
+  const [endDate, setEndDate] = useState<string>(''); // End date with the team
 
   const handleUpdateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,6 +54,12 @@ const UpdatePlayerForm: React.FC<UpdatePlayerFormProps> = ({ onPlayerChange, tro
         age: playerAge === '' ? undefined : playerAge,
         position: position || null,
       });
+
+      if (teamId !== '') {
+        await updatePlayerTeam(playerId, Number(teamId), startDate || undefined, endDate || undefined);
+        alert('Player team updated successfully!');
+      }
+
       alert('Player updated successfully!');
       onPlayerChange(); // Refresh the player list
     } catch (error) {
@@ -163,6 +191,42 @@ const UpdatePlayerForm: React.FC<UpdatePlayerFormProps> = ({ onPlayerChange, tro
             Strip Trophy
           </Button>
         </Box>
+      </Box>
+
+      <Box sx={{ mt: 3 }}>
+        <Typography variant="h6" gutterBottom>
+          Update Team Assignment
+        </Typography>
+        <FormControl fullWidth sx={{ marginBottom: 2 }}>
+          <InputLabel id="team-select-label">Select Team</InputLabel>
+          <Select
+            labelId="team-select-label"
+            value={teamId}
+            onChange={(e) => setTeamId(e.target.value === '' ? '' : Number(e.target.value))}
+          >
+            {teams.map((team) => (
+              <MenuItem key={team.team_id} value={team.team_id}>
+                {team.team_name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <TextField
+          label="Start Date"
+          fullWidth
+          margin="normal"
+          type="date"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+        />
+        <TextField
+          label="End Date"
+          fullWidth
+          margin="normal"
+          type="date"
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
+        />
       </Box>
 
       <Button variant="contained" color="primary" type="submit" sx={{ mt: 3 }}>

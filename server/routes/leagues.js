@@ -14,6 +14,50 @@ router.get('/', (req, res) => {
   });
 });
 
+// Get all leagues
+router.get('/:id', (req, res) => {
+  const query = 'SELECT * FROM Leagues where league_id = ?';
+  db.get(query, [req.params.id], (err, league) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+
+    if (!league) {
+      res.status(404).json({ error: 'League ID not found.' });
+      return;
+    }
+
+    res.json(league);
+  });
+});
+
+// get all leagues and the teams that play in them using team_league table
+router.get('/:id/teams', (req, res) => {
+  const query = `
+    SELECT 
+      Teams.team_id, 
+      Teams.team_name, 
+      Team_League.league_id
+    FROM 
+      Teams
+    LEFT JOIN 
+      Team_League ON Teams.team_id = Team_League.team_id
+    WHERE
+      Team_League.league_id = ?
+  `;
+  db.all(query, [req.params.id], (err, rows) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.json(rows);
+  });
+});
+
+
+
+
 // Add a league
 router.post('/', (req, res) => {
   const { league_name, total_matches, total_teams, prize, league_trophy_id } = req.body;

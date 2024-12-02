@@ -32,6 +32,37 @@ router.get('/', (req, res) => {
   });
 });
 
+// Get all the players that play in a team using player_team table
+router.get('/:id/players', (req, res) => {
+  const query = `
+    SELECT 
+      Players.player_id, 
+      Players.player_name, 
+      Players.player_country, 
+      Players.age, 
+      Players.position
+    FROM 
+      Players
+    LEFT JOIN 
+      Player_Team ON Players.player_id = Player_Team.player_id
+    WHERE 
+      Player_Team.team_id = ?
+  `;
+  db.all(query, [req.params.id], (err, rows) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json(rows);
+  });
+});
+
+
+
+
+
+
+
+
 // Add a trophy to a team
 router.post('/:id/trophies', (req, res) => {
   const { trophy_id, year_awarded } = req.body;

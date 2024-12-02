@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { addPlayer, assignPlayerTrophy } from '../api';
+import React, { useState, useEffect } from 'react';
+import { addPlayer, assignPlayerTrophy, addPlayerToTeam, getTeams } from '../api'; // Added `addPlayerToTeam` and `getTeams`
 import { TextField, Button, Box, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
-import { Trophy } from '../api';
+import { Trophy, Team } from '../api';
 
 interface AddPlayerFormProps {
   onPlayerChange: () => void;
@@ -15,6 +15,23 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onPlayerChange, trophies 
   const [position, setPosition] = useState('');
   const [selectedTrophy, setSelectedTrophy] = useState<number | ''>(''); // Trophy to assign
   const [yearAwarded, setYearAwarded] = useState<number | ''>(''); // Year awarded for the trophy
+  const [selectedTeam, setSelectedTeam] = useState<number | ''>(''); // Team to assign
+  const [startDate, setStartDate] = useState<string>(''); // Start date for the team
+  const [teams, setTeams] = useState<Team[]>([]); // List of teams
+
+  // Fetch teams on component mount
+  useEffect(() => {
+    const fetchTeams = async () => {
+      try {
+        const data = await getTeams();
+        setTeams(data);
+      } catch (error) {
+        console.error('Error fetching teams:', error);
+      }
+    };
+
+    fetchTeams();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,6 +55,12 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onPlayerChange, trophies 
       if (selectedTrophy !== '' && yearAwarded !== '') {
         await assignPlayerTrophy(Number(playerId), Number(selectedTrophy), Number(yearAwarded));
         alert('Trophy assigned successfully!');
+      }
+
+      // Add the player to a team if selected
+      if (selectedTeam !== '' && startDate) {
+        await addPlayerToTeam(Number(playerId), Number(selectedTeam), startDate);
+        alert('Player added to team successfully!');
       }
 
       alert('Player added successfully!');
@@ -114,6 +137,36 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onPlayerChange, trophies 
           value={yearAwarded}
           onChange={(e) => setYearAwarded(e.target.value === '' ? '' : Number(e.target.value))}
           disabled={selectedTrophy === ''} // Disable only if no trophy is selected
+        />
+      </Box>
+
+      <Box sx={{ mt: 3 }}>
+        <Typography variant="h6" gutterBottom>
+          Assign Team (Optional)
+        </Typography>
+        <FormControl fullWidth sx={{ marginBottom: 2 }}>
+          <InputLabel id="team-select-label">Select Team</InputLabel>
+          <Select
+            labelId="team-select-label"
+            value={selectedTeam}
+            onChange={(e) => setSelectedTeam(e.target.value === '' ? '' : Number(e.target.value))}
+          >
+            {teams.map((team) => (
+              <MenuItem key={team.team_id} value={team.team_id}>
+                {team.team_name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <TextField
+          label="Start Date"
+          fullWidth
+          margin="normal"
+          type="date"
+          InputLabelProps={{ shrink: true }}
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+          disabled={selectedTeam === ''} // Disable only if no team is selected
         />
       </Box>
 

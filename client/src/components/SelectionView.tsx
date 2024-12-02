@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { getPlayers, getIndividualTrophies } from '../api';
+import { getPlayers, getIndividualTrophies, getTeams } from '../api';
 import AddPlayerForm from './AddPlayerForm';
 import UpdatePlayerForm from './UpdatePlayerForm';
 import DeletePlayerForm from './DeletePlayerForm';
-import { Player, Trophy } from '../api';
+import { Player, Trophy, Team } from '../api';
 import {
   Container,
   Typography,
@@ -24,6 +24,7 @@ import {
 const SelectionView: React.FC = () => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [trophies, setTrophies] = useState<Trophy[]>([]);
+  const [teams, setTeams] = useState<Team[]>([]);
   const [selectedAction, setSelectedAction] = useState<string | null>(null);
 
   // Fetch players
@@ -46,10 +47,21 @@ const SelectionView: React.FC = () => {
     }
   };
 
-  // Fetch both players and trophies on mount
+  // Fetch teams
+  const fetchTeams = async () => {
+    try {
+      const data = await getTeams();
+      setTeams(data);
+    } catch (error) {
+      console.error('Error fetching teams:', error);
+    }
+  };
+
+  // Fetch players, trophies, and teams on mount
   useEffect(() => {
     fetchPlayers();
     fetchTrophies();
+    fetchTeams();
   }, []);
 
   return (
@@ -73,8 +85,12 @@ const SelectionView: React.FC = () => {
 
       {/* Render the appropriate form based on the selected action */}
       <Box sx={{ marginTop: '20px' }}>
-        {selectedAction === 'add' && <AddPlayerForm onPlayerChange={fetchPlayers} trophies={trophies} />}
-        {selectedAction === 'update' && <UpdatePlayerForm onPlayerChange={fetchPlayers} trophies={trophies} />}
+        {selectedAction === 'add' && (
+          <AddPlayerForm onPlayerChange={fetchPlayers} trophies={trophies} />
+        )}
+        {selectedAction === 'update' && (
+          <UpdatePlayerForm onPlayerChange={fetchPlayers} trophies={trophies} teams={teams} />
+        )}
         {selectedAction === 'delete' && <DeletePlayerForm onPlayerChange={fetchPlayers} />}
       </Box>
 
