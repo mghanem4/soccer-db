@@ -7,6 +7,9 @@ import LeagueCrud from './components/LeagueCrud';
 import ManagerCrud from './components/ManagerCrud';
 import PlayerStatsPage from './components/PlayerStatsPage';
 import LeagueStatsPage from './components/LeagueStatsPage';
+import TeamStatsPage from './components/TeamStatsPage';
+import QueryButtonsPage from './components/QueryButtonsPage';
+
 
 
 
@@ -34,6 +37,10 @@ function App() {
 
 
         <Route path="/league-stats" element={<LeagueStatsPage />} />
+
+        <Route path="/team-stats" element={<TeamStatsPage />} />
+
+        <Route path="/query-page" element={<QueryButtonsPage />} />
 
 
       </Routes>

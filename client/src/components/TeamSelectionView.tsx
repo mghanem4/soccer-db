@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { getTeams, Team } from '../api';
+import { getTeams, getTrophies, Team, Trophy } from '../api'; // Ensure you have getTrophies imported
 import AddTeamForm from './AddTeamForm';
 import UpdateTeamForm from './UpdateTeamForm';
 import DeleteTeamForm from './DeleteTeamForm';
 import TeamList from './TeamList';
-import { Container, Typography, MenuItem, Select, FormControl, InputLabel, Box } from '@mui/material';
+import { Container, Typography, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 
 const TeamSelectionView: React.FC = () => {
   const [teams, setTeams] = useState<Team[]>([]); // Shared state for teams
+  const [trophies, setTrophies] = useState<Trophy[]>([]); // Shared state for trophies
   const [selectedAction, setSelectedAction] = useState<string | null>(null);
 
   // Fetch teams from the database
@@ -20,8 +21,19 @@ const TeamSelectionView: React.FC = () => {
     }
   };
 
+  // Fetch trophies from the database
+  const fetchTrophies = async () => {
+    try {
+      const data = await getTrophies();
+      setTrophies(data.filter((trophy) => trophy.trophy_type !== 'Individual')); // Exclude individual trophies
+    } catch (error) {
+      console.error('Error fetching trophies:', error);
+    }
+  };
+
   useEffect(() => {
     fetchTeams(); // Fetch teams on component mount
+    fetchTrophies(); // Fetch trophies on component mount
   }, []);
 
   return (
@@ -45,8 +57,8 @@ const TeamSelectionView: React.FC = () => {
 
       <TeamList teams={teams} />
 
-      {selectedAction === 'add' && <AddTeamForm onTeamChange={fetchTeams} />}
-      {selectedAction === 'update' && <UpdateTeamForm onTeamChange={fetchTeams} />}
+      {selectedAction === 'add' && <AddTeamForm onTeamChange={fetchTeams} trophies={trophies} />}
+      {selectedAction === 'update' && <UpdateTeamForm onTeamChange={fetchTeams} trophies={trophies} />}
       {selectedAction === 'delete' && <DeleteTeamForm onTeamChange={fetchTeams} />}
     </Container>
   );

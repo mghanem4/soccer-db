@@ -26,6 +26,9 @@ console.log('Players route exists:', fs.existsSync('./routes/players.js'));
 console.log('Teams route exists:', fs.existsSync('./routes/teams.js'));
 console.log('Managers route exists:', fs.existsSync('./routes/managers.js'));
 console.log('League route exists:', fs.existsSync('./routes/leagues.js'));
+console.log('Trophy route exists:', fs.existsSync('./routes/trophies.js'));
+console.log('Queries route exists:', fs.existsSync('./routes/queries.js'));
+
 
 
 // Connect to SQLite database
@@ -43,6 +46,9 @@ try {
   app.use('/teams', require('./routes/teams'));
   app.use('/leagues', require('./routes/leagues'));
   app.use('/managers', require('./routes/managers'));
+  app.use('/trophies', require('./routes/trophies'));
+  app.use('/queries', require('./routes/queries'));
+
 
 
 } 

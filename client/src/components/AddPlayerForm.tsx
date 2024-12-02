@@ -1,28 +1,45 @@
 import React, { useState } from 'react';
-import { addPlayer } from '../api';
-import { TextField, Button, Box, Typography } from '@mui/material';
+import { addPlayer, assignPlayerTrophy } from '../api';
+import { TextField, Button, Box, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { Trophy } from '../api';
 
 interface AddPlayerFormProps {
   onPlayerChange: () => void;
+  trophies: Trophy[]; // List of trophies
 }
 
-const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onPlayerChange }) => {
+const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onPlayerChange, trophies }) => {
   const [playerName, setPlayerName] = useState('');
   const [playerCountry, setPlayerCountry] = useState('');
-  const [playerAge, setPlayerAge] = useState(0);
-  const [contract, setContract] = useState('');
+  const [playerAge, setPlayerAge] = useState<number | ''>('');
   const [position, setPosition] = useState('');
+  const [selectedTrophy, setSelectedTrophy] = useState<number | ''>(''); // Trophy to assign
+  const [yearAwarded, setYearAwarded] = useState<number | ''>(''); // Year awarded for the trophy
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate required fields
+    if (!playerName || !playerCountry || !position) {
+      alert('Player name, country, and position are required.');
+      return;
+    }
+
     try {
-      await addPlayer({
+      // Add the player
+      const playerId = await addPlayer({
         player_name: playerName,
         player_country: playerCountry,
-        age: playerAge,
-        contract,
+        age: playerAge === '' ? 0 : Number(playerAge),
         position,
       });
+
+      // Assign the trophy if selected
+      if (selectedTrophy !== '' && yearAwarded !== '') {
+        await assignPlayerTrophy(Number(playerId), Number(selectedTrophy), Number(yearAwarded));
+        alert('Trophy assigned successfully!');
+      }
+
       alert('Player added successfully!');
       onPlayerChange(); // Refresh player list
     } catch (error) {
@@ -58,14 +75,7 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onPlayerChange }) => {
         margin="normal"
         type="number"
         value={playerAge}
-        onChange={(e) => setPlayerAge(Number(e.target.value))}
-      />
-      <TextField
-        label="Contract"
-        fullWidth
-        margin="normal"
-        value={contract}
-        onChange={(e) => setContract(e.target.value)}
+        onChange={(e) => setPlayerAge(e.target.value === '' ? '' : Number(e.target.value))}
       />
       <TextField
         label="Position"
@@ -75,6 +85,38 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onPlayerChange }) => {
         onChange={(e) => setPosition(e.target.value)}
         required
       />
+
+      <Box sx={{ mt: 3 }}>
+        <Typography variant="h6" gutterBottom>
+          Assign Trophy (Optional)
+        </Typography>
+        <FormControl fullWidth sx={{ marginBottom: 2 }}>
+          <InputLabel id="trophy-select-label">Select Trophy</InputLabel>
+          <Select
+            labelId="trophy-select-label"
+            value={selectedTrophy}
+            onChange={(e) => setSelectedTrophy(e.target.value === '' ? '' : Number(e.target.value))}
+          >
+            {trophies
+              .filter((trophy) => trophy.trophy_type === 'Individual') // Only show individual trophies
+              .map((trophy) => (
+                <MenuItem key={trophy.trophy_id} value={trophy.trophy_id}>
+                  {trophy.trophy_name}
+                </MenuItem>
+              ))}
+          </Select>
+        </FormControl>
+        <TextField
+          label="Year Awarded"
+          fullWidth
+          margin="normal"
+          type="number"
+          value={yearAwarded}
+          onChange={(e) => setYearAwarded(e.target.value === '' ? '' : Number(e.target.value))}
+          disabled={selectedTrophy === ''} // Disable only if no trophy is selected
+        />
+      </Box>
+
       <Button variant="contained" color="primary" type="submit" sx={{ mt: 2 }}>
         Add Player
       </Button>

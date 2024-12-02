@@ -11,7 +11,6 @@ export interface Player {
   player_name: string | null;
   player_country: string | null;
   age: number;
-  contract: string | null;
   position: string | null;
 }
 
@@ -20,7 +19,6 @@ export interface NewPlayer {
   player_name: string;
   player_country: string;
   age: number;
-  contract: string;
   position: string;
 }
 
@@ -31,7 +29,6 @@ export interface Team {
   team_wins: number | null; // Allow null
   team_draws: number | null; // Allow null
   team_loses: number | null; // Allow null
-  team_trophies: number | null; // Allow null
   goals_scored: number | null; // Allow null
 }
 
@@ -39,12 +36,12 @@ export interface Team {
 // Define the type of a team sent to the database
 export interface NewTeam {
   team_name: string;
-  team_wins: number;
-  team_draws: number;
-  team_loses: number;
-  team_trophies: number;
-  goals_scored: number;
+  team_wins?: number; // Optional
+  team_draws?: number; // Optional
+  team_loses?: number; // Optional
+  goals_scored?: number; // Optional
 }
+
 
 // Define the League type
 export interface League {
@@ -53,6 +50,7 @@ export interface League {
   total_teams: number;
   prize: number;
   league_name: string;
+  league_trophy_id: number;
 }
 
 // Define the League payload for adding/updating
@@ -61,6 +59,7 @@ export interface NewLeague {
   total_teams: number;
   prize?: number;
   league_name: string;
+  league_trophy_id: number | null;
 }
 
 // Define the Manager type
@@ -78,6 +77,28 @@ export interface NewManager {
   age: number | null;
   // age?: number;
   manager_country: string;
+}
+
+// Define the type of a trophy retrieved from the database
+export interface Trophy {
+  trophy_id: number;        // Unique identifier for the trophy
+  trophy_name: string;      // Name of the trophy
+  trophy_type: 'League' | 'Cup' | 'Individual'; // Trophy type: League, Cup, or Individual
+}
+
+// Define the type of a new trophy sent to the database
+export interface NewTrophy {
+  trophy_name: string;      // Name of the trophy
+  trophy_type: 'League' | 'Cup'; // Only 'League' or 'Cup' for leagues
+}
+export interface TeamWithTrophies {
+  team_id: number;
+  team_name: string | null;
+  team_wins: number | null;
+  team_draws: number | null;
+  team_loses: number | null;
+  goals_scored: number | null;
+  trophies: Trophy[]; // List of trophies associated with the team
 }
 
 
@@ -142,14 +163,17 @@ export const getTeams = async (): Promise<Team[]> => {
   }
 };
 // Add a new team
-export const addTeam = async (team: NewTeam): Promise<void> => {
+// Updated addTeam function
+export const addTeam = async (team: NewTeam): Promise<number> => {
   try {
-    await axios.post(`${API_BASE_URL}/teams`, team);
+    const response = await axios.post(`${API_BASE_URL}/teams`, team);
+    return response.data.team_id; // Ensure the backend sends the created team_id
   } catch (error) {
     console.error('Error adding team:', error);
     throw error;
-    }
-    }
+  }
+};
+
 // Update a team
 export const updateTeam = async (
   id: number,
@@ -290,9 +314,190 @@ export const getTeamsByLeague = async (leagueId: number): Promise<Team[]> => {
 };
 
 
+// Fetch players by team
+export const getPlayersByTeam = async (teamId: number): Promise<Player[]> => {
+  try {
+    const response = await axios.get<Player[]>(`${API_BASE_URL}/teams/${teamId}/players`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching players by team:', error);
+    throw error;
+  }
+};
+
+// Fetch player stats by player ID
+export const getPlayerStats = async (playerId: number): Promise<any> => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/players/${playerId}/stats`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching player stats:', error);
+    throw error;
+  }
+};
+
+export const getLeagueTrophies = async (): Promise<Trophy[]> => {
+  try {
+    const response = await axios.get<Trophy[]>(`${API_BASE_URL}/trophies/league-trophies`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching league trophies:', error);
+    throw error;
+  }
+};
+
+// Add a new trophy
+export const addTrophy = async (trophy: NewTrophy): Promise<void> => {
+  try {
+    await axios.post(`${API_BASE_URL}/trophies`, trophy);
+  } catch (error) {
+    console.error('Error adding trophy:', error);
+    throw error;
+  }
+};
+
+export const getTrophies = async (): Promise<Trophy[]> => {
+  try {
+    const response = await axios.get<Trophy[]>(`${API_BASE_URL}/trophies`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching trophies:', error);
+    throw error;
+  }
+};
+
+export const updateTrophy = async (id: number, trophy: NewTrophy): Promise<void> => {
+  try {
+    await axios.put(`${API_BASE_URL}/trophies/${id}`, trophy);
+  } catch (error) {
+    console.error('Error updating trophy:', error);
+    throw error;
+  }
+};
+
+/**
+ * Delete a trophy
+ * @param id - ID of the trophy to delete
+ */
+export const deleteTrophy = async (id: number): Promise<void> => {
+  try {
+    await axios.delete(`${API_BASE_URL}/trophies/${id}`);
+  } catch (error) {
+    console.error('Error deleting trophy:', error);
+    throw error;
+  }
+};
+
+export const getTeamsWithTrophies = async (): Promise<TeamWithTrophies[]> => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/teams`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching teams with trophies:', error);
+    throw error;
+  }
+};
+export const addTeamTrophy = async (teamId: number, trophyId: number, yearAwarded: number): Promise<void> => {
+  try {
+    await axios.post(`${API_BASE_URL}/teams/${teamId}/trophies`, { trophy_id: trophyId, year_awarded: yearAwarded });
+  } catch (error) {
+    console.error('Error adding trophy to team:', error);
+    throw error;
+  }
+};
+export const deleteTeamTrophy = async (teamId: number, trophyId: number): Promise<void> => {
+  try {
+    await axios.delete(`${API_BASE_URL}/teams/${teamId}/trophies/${trophyId}`);
+  } catch (error) {
+    console.error('Error deleting trophy from team:', error);
+    throw error;
+  }
+};
+
+// Assign a trophy to a team
+export const assignTrophyToTeam = async (teamId: number, trophyId: number, yearAwarded: number): Promise<void> => {
+  try {
+    await axios.post(`${API_BASE_URL}/teams/${teamId}/trophies`, {
+      trophyId,
+      yearAwarded,
+    });
+  } catch (error) {
+    console.error('Error assigning trophy to team:', error);
+    throw error;
+  }
+};
+
+// Strip a trophy from a team
+export const stripTrophyFromTeam = async (trophyId: number): Promise<void> => {
+  try {
+    await axios.delete(`${API_BASE_URL}/team-trophies/${trophyId}`);
+  } catch (error) {
+    console.error('Error stripping trophy from team:', error);
+    throw error;
+  }
+};
+
+export const assignTeamTrophy = async (teamId: number, trophyId: number, yearAwarded: number): Promise<void> => {
+  try {
+    await axios.post(`${API_BASE_URL}/teams/${teamId}/trophies`, { trophy_id: trophyId, year_awarded: yearAwarded });
+  } catch (error) {
+    console.error('Error assigning trophy:', error);
+    throw error;
+  }
+};
 
 
 
+export const deleteTeamTrophies = async (teamId: number): Promise<void> => {
+  try {
+    await axios.delete(`${API_BASE_URL}/teams/${teamId}/trophies`);
+  } catch (error) {
+    console.error('Error deleting team trophies:', error);
+    throw error;
+  }
+};
+
+export const stripPlayerTrophy = async (playerId: number, trophyId: number, yearAwarded: number): Promise<void> => {
+  try {
+    await axios.delete(`${API_BASE_URL}/players/${playerId}/trophies/${trophyId}`);
+  } catch (error) {
+    console.error('Error stripping trophy:', error);
+    throw error;
+  }
+};
+
+export const getIndividualTrophies = async (): Promise<Trophy[]> => {
+  const response = await axios.get(`${API_BASE_URL}/trophies/individual`);
+  return response.data;
+};
+
+export const assignPlayerTrophy = async (playerId: number, trophyId: number, yearAwarded: number): Promise<void> => {
+  try {
+    await axios.post(`${API_BASE_URL}/players/${playerId}/trophies`, { trophy_id: trophyId, year_awarded: yearAwarded });
+  } catch (error) {
+    console.error('Error assigning trophy:', error);
+    throw error;
+  }
+};
+export const deletePlayerTrophies = async (playerId: number): Promise<void> => {
+  try {
+    await axios.delete(`${API_BASE_URL}/players/${playerId}/trophies`);
+  } catch (error) {
+    console.error('Error deleting player trophies:', error);
+    throw error;
+  }
+};
+
+
+// Strip a trophy from a team
+export const stripTeamTrophy = async (teamId: number, trophyId: number): Promise<void> => {
+  try {
+    await axios.delete(`${API_BASE_URL}/teams/${teamId}/trophies/${trophyId}`);
+  } catch (error) {
+    console.error('Error stripping trophy:', error);
+    throw error;
+  }
+};
 
 
 

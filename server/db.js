@@ -14,7 +14,8 @@ const db = new sqlite3.Database('./database/soccer.db', (err) => {
     console.log('Connected to sqlite3 database in db.js');
   }
 });
-
+// Must run with foreign keys enabled
+// db.run('PRAGMA foreign_keys = ON');
 
 // Export the database connection
 module.exports = db;

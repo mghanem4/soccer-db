@@ -35,7 +35,7 @@ const HomePage: React.FC = () => {
 
           onClick={() => navigate('/team-crud')}
         >
-          Team CRUD (Create, Read, Update, Delete)
+          Team & Trophy CRUD (Create, Read, Update, Delete)
         </Button>
 
         <Button
@@ -45,7 +45,7 @@ const HomePage: React.FC = () => {
           sx={{ mb: 2 }}
           onClick={() => navigate('/league-crud')}
         >
-          League CRUD (Create, Read, Update, Delete)
+          League & Trophy CRUD (Create, Read, Update, Delete)
         </Button>
 
         <Button
@@ -57,6 +57,10 @@ const HomePage: React.FC = () => {
         >
           Manager CRUD (Create, Read, Update, Delete)
         </Button>
+
+      <Typography variant="body1" gutterBottom>
+        Choose an option to view the stats.
+      </Typography>
 
         <Button
           variant="contained"
@@ -76,6 +80,26 @@ const HomePage: React.FC = () => {
           onClick={() => navigate('/league-stats')}
         >
           League Stats 
+        </Button>
+
+        <Button
+          variant="contained"
+          color="warning"
+          fullWidth
+          sx={{ mb: 2 }}
+          onClick={() => navigate('/team-stats')}
+        >
+          Team Stats 
+        </Button>
+
+        <Button
+          variant="contained"
+          color="warning"
+          fullWidth
+          sx={{ mb: 2 }}
+          onClick={() => navigate('/query-page')}
+        >
+          Query Pages 
         </Button>
 
       </Box>

@@ -13,6 +13,7 @@ const LeagueList: React.FC<LeagueListProps> = ({ leagues }) => {
     { id: 'total_matches' as keyof League, label: 'Total Matches' },
     { id: 'total_teams' as keyof League, label: 'Total Teams' },
     { id: 'prize' as keyof League, label: 'Prize' },
+    { id: 'league_trophy_id' as keyof League, label: 'League Trophy ID' },
   ];
 
   const filterBy = (league: League, query: string) => {

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { deletePlayer } from '../api';
+import { deletePlayerTrophies, deletePlayer } from '../api';
 import { TextField, Button, Box, Typography } from '@mui/material';
 
 interface DeletePlayerFormProps {
-  onPlayerChange: () => void;
+  onPlayerChange: () => void; // Callback to refresh the player list
 }
 
 const DeletePlayerForm: React.FC<DeletePlayerFormProps> = ({ onPlayerChange }) => {
@@ -11,17 +11,23 @@ const DeletePlayerForm: React.FC<DeletePlayerFormProps> = ({ onPlayerChange }) =
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Ensure playerId is valid
+
     if (playerId === '') {
       alert('Player ID is required.');
       return;
     }
+
     try {
-      await deletePlayer(playerId);
-      alert('Player deleted successfully!');
+      // Step 1: Delete the player's trophies
+      await deletePlayerTrophies(Number(playerId));
+
+      // Step 2: Delete the player from the Players table
+      await deletePlayer(Number(playerId));
+
+      alert('Player and their trophies deleted successfully!');
       onPlayerChange(); // Refresh player list
     } catch (error) {
-      console.error('Error deleting player:', error);
+      console.error('Error deleting player or their trophies:', error);
       alert('Failed to delete player.');
     }
   };

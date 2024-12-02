@@ -42,6 +42,7 @@ const LeagueStatsPage: React.FC = () => {
     { id: 'total_matches' as keyof League, label: 'Matches' },
     { id: 'total_teams' as keyof League, label: 'Teams' },
     { id: 'prize' as keyof League, label: 'Prize' },
+    { id: 'league_trophy_id' as keyof League, label: 'League Trophy ID' },
   ];
 
   const teamColumns = [

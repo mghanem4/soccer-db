@@ -14,7 +14,6 @@ const TeamList: React.FC<TeamListProps> = ({ teams }) => {
     { id: 'team_draws' as keyof Team, label: 'Draws' },
     { id: 'team_loses' as keyof Team, label: 'Losses' },
     { id: 'goals_scored' as keyof Team, label: 'Goals Scored' },
-    { id: 'team_trophies' as keyof Team, label: 'Trophies' },
   ];
 
   const filterBy = (team: Team, query: string) => {

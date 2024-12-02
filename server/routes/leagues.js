@@ -1,29 +1,11 @@
 const express = require('express');
-const router = express.Router();
 const db = require('../db');
+const router = express.Router();
 
-
-// Get teams in a specific league
-router.get('/:id/teams', (req, res) => {
-  const query = `
-    SELECT
-        team_name,
-        league_name,
-        team_id,
-        league_id,
-        total_matches,
-        team_wins,
-        team_draws,
-        team_loses,
-        titles_won
-    FROM
-        (SELECT * FROM Teams NATURAL JOIN Team_league)
-    NATURAL JOIN
-        Leagues
-    WHERE league_id = ?
-  `;
-
-  db.all(query, [req.params.id], (err, rows) => {
+// Get all leagues
+router.get('/', (req, res) => {
+  const query = 'SELECT * FROM Leagues';
+  db.all(query, [], (err, rows) => {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
@@ -32,46 +14,33 @@ router.get('/:id/teams', (req, res) => {
   });
 });
 
-// Get all leagues
-router.get('/', (req, res) => {
-  const query = 'SELECT * FROM Leagues';
-  db.all(query, [], (err, rows) => {
-    if (err) {
-      console.error('Database error:', err.message);
-      res.status(500).json({ error: 'Failed to retrieve leagues.' });
-      return;
-    }
-    res.json(rows);
-  });
-});
-
-// Add a new league
+// Add a league
 router.post('/', (req, res) => {
-  const { total_matches, total_teams, prize, league_name } = req.body;
+  const { league_name, total_matches, total_teams, prize, league_trophy_id } = req.body;
 
-  if (!total_matches || !total_teams || !league_name) {
-    return res.status(400).json({ error: 'total_matches, total_teams, and league_name are required.' });
+  if (!league_name || !total_matches || !total_teams) {
+    return res.status(400).json({ error: 'League name, total matches, and total teams are required.' });
   }
 
   const query = `
-    INSERT INTO Leagues (total_matches, total_teams, prize, league_name)
-    VALUES (?, ?, ?, ?)
+    INSERT INTO Leagues (league_name, total_matches, total_teams, prize, league_trophy_id)
+    VALUES (?, ?, ?, ?, ?)
   `;
-  const params = [total_matches, total_teams, prize || 0, league_name];
 
-  db.run(query, params, function (err) {
+  db.run(query, [league_name, total_matches, total_teams, prize || 0, league_trophy_id || null], function (err) {
     if (err) {
-      console.error('Database error:', err.message);
-      res.status(500).json({ error: 'Failed to add league.' });
+      res.status(500).json({ error: err.message });
       return;
     }
-    res.status(201).json({ league_id: this.lastID });
+    res.json({ league_id: this.lastID });
   });
 });
 
+module.exports = router;
+
 // Update
 router.put('/:id', (req, res) => {
-    const { total_matches, total_teams, prize, league_name } = req.body;
+    const { total_matches, total_teams, prize, league_name,league_trophy_id } = req.body;
   
     const query = `
       UPDATE Leagues
@@ -80,6 +49,8 @@ router.put('/:id', (req, res) => {
         total_teams = COALESCE(?, total_teams),
         prize = COALESCE(?, prize),
         league_name = COALESCE(?, league_name)
+        league_trophy_id = COALESCE(?, league_trophy_id)
+
       WHERE league_id = ?
     `;
     const params = [
@@ -87,6 +58,7 @@ router.put('/:id', (req, res) => {
       total_teams || null,
       prize || null,
       league_name || null,
+      league_trophy_id || null,
       req.params.id,
     ];
   

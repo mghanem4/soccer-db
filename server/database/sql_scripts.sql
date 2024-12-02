@@ -3,7 +3,6 @@ SELECT
     p.player_name,
     pt.team_id, 
     t.team_name, 
-    p.contract, 
     pt.player_team_goals
 FROM 
     Players p

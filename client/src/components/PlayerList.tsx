@@ -17,7 +17,6 @@ const PlayerList: React.FC<PlayerListProps> = ({ players }) => {
     { id: 'player_name' as keyof Player, label: 'Name' },
     { id: 'player_country' as keyof Player, label: 'Country' },
     { id: 'age' as keyof Player, label: 'Age' },
-    { id: 'contract' as keyof Player, label: 'Contract' },
     { id: 'position' as keyof Player, label: 'Position' },
   ];
 

@@ -1,6 +1,9 @@
 -- Create Players Table
 
 BEGIN TRANSACTION;
+
+-- PRAGMA foreign_keys = ON;
+
 DROP TABLE IF EXISTS Players;
 DROP TABLE IF EXISTS Managers;
 DROP TABLE IF EXISTS Teams;
@@ -10,6 +13,10 @@ DROP TABLE IF EXISTS Team_league;
 DROP TABLE IF EXISTS League_Team;
 DROP TABLE IF EXISTS Manager_Team;
 DROP TABLE IF EXISTS Player_Attributes;
+DROP TABLE IF EXISTS Trophies;
+DROP TABLE IF EXISTS Player_Trophies;
+DROP TABLE IF EXISTS Team_Trophies;
+
 
 
 
@@ -17,10 +24,7 @@ CREATE TABLE Players (
     player_id INTEGER PRIMARY KEY AUTOINCREMENT,
     player_name TEXT NOT NULL,
     player_country TEXT NOT NULL,
-    player_injuries INTEGER DEFAULT 0,
     age INTEGER NOT NULL,
-    contract TEXT DEFAULT NULL,
-    player_trophies INTEGER DEFAULT 0,
     position TEXT NOT NULL
 );
 
@@ -37,10 +41,23 @@ CREATE TABLE Player_Attributes (
     attribute_id INTEGER PRIMARY KEY AUTOINCREMENT,
     player_id INTEGER NOT NULL,
     season_year INTEGER NOT NULL,
-    tackles_won INTEGER DEFAULT 0,
-    recoveries INTEGER DEFAULT 0,
-    aerial_duels_won INTEGER DEFAULT 0,
-    aerial_duels_lost INTEGER DEFAULT 0,
+    penalties INTEGER DEFAULT 0,
+    positioning INTEGER DEFAULT 0,
+    interceptions INTEGER DEFAULT 0,
+    sliding_tackle INTEGER DEFAULT 0,
+    preferred_foot TEXT DEFAULT "right",
+    attacking_work_rate TEXT,
+    defensive_work_rate TEXT,
+    finishing INTEGER DEFAULT 0,
+    heading_accuracy INTEGER DEFAULT 0,
+    short_passing INTEGER DEFAULT 0,
+    dribbling INTEGER DEFAULT 0,
+    long_passing INTEGER DEFAULT 0,
+    ball_control INTEGER DEFAULT 0,
+    acceleration INTEGER DEFAULT 0,
+    sprint_speed INTEGER DEFAULT 0,
+    shot_power INTEGER DEFAULT 0,
+    long_shots INTEGER DEFAULT 0,
     FOREIGN KEY (player_id) REFERENCES Players(player_id)
 );
 
@@ -53,7 +70,6 @@ CREATE TABLE Teams (
     team_wins INTEGER DEFAULT 0,
     team_draws INTEGER DEFAULT 0,
     team_loses INTEGER DEFAULT 0,
-    team_trophies INTEGER DEFAULT 0,
     goals_scored INTEGER DEFAULT 0
 );
 
@@ -63,8 +79,11 @@ CREATE TABLE Leagues (
     total_matches INTEGER NOT NULL,
     total_teams INTEGER NOT NULL,
     prize REAL DEFAULT 0,
-    league_name TEXT NOT NULL
+    league_name TEXT NOT NULL,
+    league_trophy_id INTEGER,
+    FOREIGN KEY (league_trophy_id) REFERENCES Trophies(trophy_id)
 );
+
 
 -- Create Player-Team Junction Table
 CREATE TABLE Player_Team (
@@ -81,6 +100,7 @@ CREATE TABLE Player_Team (
     FOREIGN KEY (player_id) REFERENCES Players(player_id),
     FOREIGN KEY (team_id) REFERENCES Teams(team_id)
 );
+
 
 -- Create League-Team Junction Table
 CREATE TABLE Team_league (
@@ -102,5 +122,30 @@ CREATE TABLE Manager_Team (
     FOREIGN KEY (manager_id) REFERENCES Managers(manager_id),
     FOREIGN KEY (team_id) REFERENCES Teams(team_id)
 );
+
+CREATE TABLE Trophies (
+    trophy_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    trophy_name TEXT NOT NULL,
+    trophy_type TEXT NOT NULL -- e.g., "League", "Cup", "Individual"
+    
+    );
+CREATE TABLE Player_Trophies (
+    player_id INTEGER NOT NULL,
+    trophy_id INTEGER NOT NULL,
+    year_awarded INTEGER NOT NULL,
+    PRIMARY KEY (player_id, trophy_id),
+    FOREIGN KEY (player_id) REFERENCES Players(player_id),
+    FOREIGN KEY (trophy_id) REFERENCES Trophies(trophy_id)
+);
+CREATE TABLE Team_Trophies (
+    team_id INTEGER NOT NULL,
+    trophy_id INTEGER NOT NULL,
+    year_awarded INTEGER NOT NULL,
+    PRIMARY KEY (team_id, trophy_id),
+    FOREIGN KEY (team_id) REFERENCES Teams(team_id),
+    FOREIGN KEY (trophy_id) REFERENCES Trophies(trophy_id)
+);
+
+
 END TRANSACTION;
 

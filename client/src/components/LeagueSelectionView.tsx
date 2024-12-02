@@ -1,16 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { getLeagues, League } from '../api';
 import AddLeagueForm from './AddLeagueForm';
 import UpdateLeagueForm from './UpdateLeagueForm';
 import DeleteLeagueForm from './DeleteLeagueForm';
 import LeagueList from './LeagueList';
-import { Container, Typography, MenuItem, Select, FormControl, InputLabel, Box } from '@mui/material';
+import { getLeagues, getTrophies, League, Trophy } from '../api';
+import {
+  Container,
+  Typography,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
+  Box,
+} from '@mui/material';
 
 const LeagueSelectionView: React.FC = () => {
-  const [leagues, setLeagues] = useState<League[]>([]); // Shared state for leagues
+  const [leagues, setLeagues] = useState<League[]>([]);
+  const [trophies, setTrophies] = useState<Trophy[]>([]);
   const [selectedAction, setSelectedAction] = useState<string | null>(null);
 
-  // Fetch leagues from the database
+  // Fetch leagues
   const fetchLeagues = async () => {
     try {
       const data = await getLeagues();
@@ -20,8 +29,19 @@ const LeagueSelectionView: React.FC = () => {
     }
   };
 
+  // Fetch trophies
+  const fetchTrophies = async () => {
+    try {
+      const data = await getTrophies();
+      setTrophies(data);
+    } catch (error) {
+      console.error('Error fetching trophies:', error);
+    }
+  };
+
   useEffect(() => {
-    fetchLeagues(); // Fetch leagues on component mount
+    fetchLeagues();
+    fetchTrophies();
   }, []);
 
   return (
@@ -45,11 +65,20 @@ const LeagueSelectionView: React.FC = () => {
 
       <LeagueList leagues={leagues} />
 
-
-      {/* Render the appropriate form based on the selected action */}
       {selectedAction === 'add' && <AddLeagueForm onLeagueChange={fetchLeagues} />}
-      {selectedAction === 'update' && <UpdateLeagueForm onLeagueChange={fetchLeagues} />}
-      {selectedAction === 'delete' && <DeleteLeagueForm onLeagueChange={fetchLeagues} />}
+      {selectedAction === 'update' && (
+        <UpdateLeagueForm
+          onLeagueChange={fetchLeagues}
+          onTrophyChange={fetchTrophies} // Pass onTrophyChange
+          trophies={trophies} // Pass trophies
+        />
+      )}
+      {selectedAction === 'delete' && (
+        <DeleteLeagueForm
+          onLeagueChange={fetchLeagues}
+          onTrophyChange={fetchTrophies} // Pass onTrophyChange
+        />
+      )}
     </Container>
   );
 };

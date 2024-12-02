@@ -1,17 +1,34 @@
 import React, { useState } from 'react';
-import { updateLeague } from '../api';
-import { TextField, Button, Box, Typography } from '@mui/material';
+import { updateLeague, Trophy } from '../api';
+
+import {
+  TextField,
+  Button,
+  Box,
+  Typography,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+} from '@mui/material';
 
 interface UpdateLeagueFormProps {
-  onLeagueChange: () => void; // Callback to refresh the league list
+  onLeagueChange: () => void;
+  onTrophyChange: () => void;
+  trophies: Trophy[];
 }
 
-const UpdateLeagueForm: React.FC<UpdateLeagueFormProps> = ({ onLeagueChange }) => {
-  const [leagueId, setLeagueId] = useState<number | ''>(''); // League ID to update
-  const [totalMatches, setTotalMatches] = useState<number | ''>(''); // Optional
-  const [totalTeams, setTotalTeams] = useState<number | ''>(''); // Optional
-  const [prize, setPrize] = useState<number | ''>(''); // Optional
-  const [leagueName, setLeagueName] = useState(''); // Optional
+const UpdateLeagueForm: React.FC<UpdateLeagueFormProps> = ({
+  onLeagueChange,
+  onTrophyChange,
+  trophies,
+}) => {
+  const [leagueId, setLeagueId] = useState<number | ''>('');
+  const [totalMatches, setTotalMatches] = useState<number | ''>('');
+  const [totalTeams, setTotalTeams] = useState<number | ''>('');
+  const [prize, setPrize] = useState<number | ''>('');
+  const [leagueName, setLeagueName] = useState('');
+  const [leagueTrophyId, setLeagueTrophyId] = useState<number | ''>('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,13 +40,15 @@ const UpdateLeagueForm: React.FC<UpdateLeagueFormProps> = ({ onLeagueChange }) =
 
     try {
       await updateLeague(leagueId, {
-        total_matches: totalMatches === '' ? undefined : totalMatches, // Use undefined for empty fields
+        total_matches: totalMatches === '' ? undefined : totalMatches,
         total_teams: totalTeams === '' ? undefined : totalTeams,
         prize: prize === '' ? undefined : prize,
-        league_name: leagueName || undefined, // Handle empty string
+        league_name: leagueName || undefined,
+        league_trophy_id: leagueTrophyId === '' ? undefined : leagueTrophyId,
       });
       alert('League updated successfully!');
-      onLeagueChange(); // Refresh the league list
+      onLeagueChange();
+      onTrophyChange(); // Refresh trophies if needed
     } catch (error) {
       console.error('Error updating league:', error);
       alert('Failed to update league.');
@@ -81,6 +100,21 @@ const UpdateLeagueForm: React.FC<UpdateLeagueFormProps> = ({ onLeagueChange }) =
         value={leagueName}
         onChange={(e) => setLeagueName(e.target.value)}
       />
+      <FormControl fullWidth margin="normal">
+        <InputLabel id="trophy-select-label">Trophy</InputLabel>
+        <Select
+          labelId="trophy-select-label"
+          value={leagueTrophyId}
+          onChange={(e) => setLeagueTrophyId(Number(e.target.value))}
+        >
+          <MenuItem value="">None</MenuItem>
+          {trophies.map((trophy) => (
+            <MenuItem key={trophy.trophy_id} value={trophy.trophy_id}>
+              {trophy.trophy_name} ({trophy.trophy_type})
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
       <Button variant="contained" color="primary" type="submit" sx={{ mt: 2 }}>
         Update League
       </Button>

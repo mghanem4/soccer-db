@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { deleteTeam } from '../api';
+import { deleteTeam, deleteTeamTrophies } from '../api'; // Import deleteTeamTrophies API function
 import { TextField, Button, Box, Typography } from '@mui/material';
 
 interface DeleteTeamFormProps {
@@ -11,20 +11,23 @@ const DeleteTeamForm: React.FC<DeleteTeamFormProps> = ({ onTeamChange }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Ensure teamId is valid
+  
     if (teamId === '') {
       alert('Team ID is required.');
       return;
     }
-
+  
     try {
-      await deleteTeam(teamId); // Call the deleteTeam API function
-      alert('Team deleted successfully!');
+      // First delete the team's trophies
+      await deleteTeamTrophies(Number(teamId));
+  
+      // Then delete the team
+      await deleteTeam(Number(teamId));
+      alert('Team and associated trophies deleted successfully!');
       onTeamChange(); // Refresh the team list
     } catch (error) {
       console.error('Error deleting team:', error);
-      alert('Failed to delete team.');
+      alert('Failed to delete team or associated trophies.');
     }
   };
 
