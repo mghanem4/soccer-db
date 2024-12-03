@@ -174,22 +174,32 @@ router.delete('/:id', (req, res) => {
       return res.status(500).json({ error: 'Failed to delete team trophies.' });
     }
 
-    // Step 2: Delete the team itself
-    const deleteTeamQuery = 'DELETE FROM Teams WHERE team_id = ?';
-    db.run(deleteTeamQuery, [teamId], function (err) {
+    // Step 2: Delete player-team associations for the team
+    const deletePlayerTeamQuery = 'DELETE FROM Player_Team WHERE team_id = ?';
+    db.run(deletePlayerTeamQuery, [teamId], function (err) {
       if (err) {
-        console.error('Error deleting team:', err.message);
-        return res.status(500).json({ error: 'Failed to delete team.' });
+        console.error('Error deleting player-team associations:', err.message);
+        return res.status(500).json({ error: 'Failed to delete player-team associations.' });
       }
 
-      if (this.changes === 0) {
-        return res.status(404).json({ error: 'Team not found.' });
-      }
+      // Step 3: Delete the team itself
+      const deleteTeamQuery = 'DELETE FROM Teams WHERE team_id = ?';
+      db.run(deleteTeamQuery, [teamId], function (err) {
+        if (err) {
+          console.error('Error deleting team:', err.message);
+          return res.status(500).json({ error: 'Failed to delete team.' });
+        }
 
-      res.json({ message: 'Team and its trophies deleted successfully.' });
+        if (this.changes === 0) {
+          return res.status(404).json({ error: 'Team not found.' });
+        }
+
+        res.json({ message: 'Team and its associations deleted successfully.' });
+      });
     });
   });
 });
+
 // Route to delete all trophies associated with a specific team
 router.delete('/:id/trophies', (req, res) => {
   const teamId = req.params.id;

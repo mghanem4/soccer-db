@@ -1,21 +1,20 @@
 import React, { useState } from 'react';
-import { deleteLeague, deleteTrophy } from '../api';
+import { deleteLeague } from '../api';
 import { TextField, Button, Box, Typography } from '@mui/material';
 
 interface DeleteLeagueFormProps {
   onLeagueChange: () => void;
-  onTrophyChange: () => void;
 }
 
-const DeleteLeagueForm: React.FC<DeleteLeagueFormProps> = ({ onLeagueChange, onTrophyChange }) => {
+const DeleteLeagueForm: React.FC<DeleteLeagueFormProps> = ({ onLeagueChange }) => {
   const [leagueId, setLeagueId] = useState<number | ''>(''); // League ID to delete
-  const [trophyId, setTrophyId] = useState<number | ''>(''); // Trophy ID to delete
+  const [warningMessage, setWarningMessage] = useState<string | null>(null); // Error warning message
 
   const handleLeagueSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (leagueId === '') {
-      alert('League ID is required.');
+      setWarningMessage('League ID is required.');
       return;
     }
 
@@ -23,27 +22,10 @@ const DeleteLeagueForm: React.FC<DeleteLeagueFormProps> = ({ onLeagueChange, onT
       await deleteLeague(leagueId);
       alert('League deleted successfully!');
       onLeagueChange();
+      setWarningMessage(null); // Clear any previous warnings
     } catch (error) {
       console.error('Error deleting league:', error);
-      alert('Failed to delete league.');
-    }
-  };
-
-  const handleTrophySubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (trophyId === '') {
-      alert('Trophy ID is required.');
-      return;
-    }
-
-    try {
-      await deleteTrophy(trophyId);
-      alert('Trophy deleted successfully!');
-      onTrophyChange();
-    } catch (error) {
-      console.error('Error deleting trophy:', error);
-      alert('Failed to delete trophy.');
+      setWarningMessage('Failed to delete league. Please try again.');
     }
   };
 
@@ -52,6 +34,38 @@ const DeleteLeagueForm: React.FC<DeleteLeagueFormProps> = ({ onLeagueChange, onT
       <Typography variant="h5" gutterBottom>
         Delete League
       </Typography>
+
+      {/* Static Warning Box */}
+      <Box
+        sx={{
+          backgroundColor: '#fff4e5',
+          color: '#b71c1c',
+          border: '1px solid #f5c6cb',
+          padding: '10px',
+          borderRadius: '5px',
+          marginBottom: '15px',
+        }}
+      >
+        <strong>Important:</strong> Deleting a league will also delete the trophy assigned to it because of the 1:1 relationship.
+      </Box>
+
+      {/* Dynamic Warning Box for Errors */}
+      {warningMessage && (
+        <Box
+          sx={{
+            backgroundColor: '#fff4e5',
+            color: '#b71c1c',
+            border: '1px solid #f5c6cb',
+            padding: '10px',
+            borderRadius: '5px',
+            marginBottom: '10px',
+          }}
+        >
+          <strong>Warning:</strong> {warningMessage}
+        </Box>
+      )}
+
+      {/* Form */}
       <Box component="form" onSubmit={handleLeagueSubmit}>
         <TextField
           label="League ID"
@@ -64,24 +78,6 @@ const DeleteLeagueForm: React.FC<DeleteLeagueFormProps> = ({ onLeagueChange, onT
         />
         <Button variant="contained" color="error" type="submit" sx={{ mt: 2 }}>
           Delete League
-        </Button>
-      </Box>
-
-      <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
-        Delete Trophy
-      </Typography>
-      <Box component="form" onSubmit={handleTrophySubmit}>
-        <TextField
-          label="Trophy ID"
-          fullWidth
-          margin="normal"
-          type="number"
-          value={trophyId}
-          onChange={(e) => setTrophyId(e.target.value === '' ? '' : Number(e.target.value))}
-          required
-        />
-        <Button variant="contained" color="error" type="submit" sx={{ mt: 2 }}>
-          Delete Trophy
         </Button>
       </Box>
     </Box>

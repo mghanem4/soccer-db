@@ -21,7 +21,7 @@ router.get('/most-goals', (req, res) => {
 // Get players with a preferred foot of right
 router.get('/preferred-foot-right', (req, res) => {
   const query = `
-    SELECT p.player_name
+    SELECT DISTINCT p.player_name
     FROM Players p
     JOIN Player_Attributes pa ON p.player_id = pa.player_id
     WHERE pa.preferred_foot = 'right';

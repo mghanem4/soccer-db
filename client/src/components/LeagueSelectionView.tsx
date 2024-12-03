@@ -76,7 +76,6 @@ const LeagueSelectionView: React.FC = () => {
       {selectedAction === 'delete' && (
         <DeleteLeagueForm
           onLeagueChange={fetchLeagues}
-          onTrophyChange={fetchTrophies} // Pass onTrophyChange
         />
       )}
     </Container>

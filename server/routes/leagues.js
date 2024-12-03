@@ -121,21 +121,49 @@ router.put('/:id', (req, res) => {
   });
   
 
-// Delete a league
+// Delete a league and its associated trophy
 router.delete('/:id', (req, res) => {
-  const query = 'DELETE FROM Leagues WHERE league_id = ?';
-  db.run(query, [req.params.id], function (err) {
+  const leagueId = req.params.id;
+
+  // Step 1: Retrieve the league trophy ID
+  const getLeagueTrophyQuery = 'SELECT league_trophy_id FROM Leagues WHERE league_id = ?';
+  db.get(getLeagueTrophyQuery, [leagueId], (err, row) => {
     if (err) {
-      console.error('Database error:', err.message);
-      res.status(500).json({ error: 'Failed to delete league.' });
-      return;
+      console.error('Error retrieving league trophy ID:', err.message);
+      return res.status(500).json({ error: 'Failed to retrieve league trophy.' });
     }
-    if (this.changes === 0) {
-      res.status(404).json({ error: 'League not found.' });
-      return;
+
+    if (!row) {
+      return res.status(404).json({ error: 'League not found.' });
     }
-    res.json({ message: 'League deleted successfully.' });
+
+    const trophyId = row.league_trophy_id;
+
+    // Step 2: Delete the trophy associated with the league (if exists)
+    const deleteTrophyQuery = 'DELETE FROM Trophies WHERE trophy_id = ?';
+    db.run(deleteTrophyQuery, [trophyId], function (err) {
+      if (err) {
+        console.error('Error deleting league trophy:', err.message);
+        return res.status(500).json({ error: 'Failed to delete league trophy.' });
+      }
+
+      // Step 3: Delete the league
+      const deleteLeagueQuery = 'DELETE FROM Leagues WHERE league_id = ?';
+      db.run(deleteLeagueQuery, [leagueId], function (err) {
+        if (err) {
+          console.error('Error deleting league:', err.message);
+          return res.status(500).json({ error: 'Failed to delete league.' });
+        }
+
+        if (this.changes === 0) {
+          return res.status(404).json({ error: 'League not found.' });
+        }
+
+        res.json({ message: 'League and its associated trophy deleted successfully.' });
+      });
+    });
   });
 });
+
 
 module.exports = router;
