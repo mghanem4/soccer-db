@@ -19,6 +19,21 @@ const HomePage: React.FC = () => {
 
         <Grid container spacing={3}>
           {/* CRUD Buttons */}
+
+
+          <Grid xs={12}>
+            <Box
+              component="img"
+              src="logo192.png"
+              alt="Soccer logor"
+              sx={{
+                width: '20%',
+                borderRadius: 2,
+                mb: 4,
+              }}
+            />
+          </Grid>
+
           <Grid item xs={12}>
             <Typography variant="h5" sx={{ mb: 2 }}>
               Manage Data
