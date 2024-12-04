@@ -152,7 +152,7 @@ export const deletePlayer = async (id: number): Promise<void> => {
 
 // ----------------- Team CRUD -----------------
 
-// Fetch all players
+// Fetch all teams
 export const getTeams = async (): Promise<Team[]> => {
   try {
     const response = await axios.get<Team[]>(`${API_BASE_URL}/teams`);
@@ -163,11 +163,10 @@ export const getTeams = async (): Promise<Team[]> => {
   }
 };
 // Add a new team
-// Updated addTeam function
 export const addTeam = async (team: NewTeam): Promise<number> => {
   try {
     const response = await axios.post(`${API_BASE_URL}/teams`, team);
-    return response.data.team_id; // Ensure the backend sends the created team_id
+    return response.data.team_id; 
   } catch (error) {
     console.error('Error adding team:', error);
     throw error;

@@ -28,6 +28,9 @@ console.log('Managers route exists:', fs.existsSync('./routes/managers.js'));
 console.log('League route exists:', fs.existsSync('./routes/leagues.js'));
 console.log('Trophy route exists:', fs.existsSync('./routes/trophies.js'));
 console.log('Queries route exists:', fs.existsSync('./routes/queries.js'));
+console.log('Draw.io file exists:', fs.existsSync('./database/ER & Schema.drawio'));
+
+
 
 
 
@@ -48,8 +51,6 @@ try {
   app.use('/managers', require('./routes/managers'));
   app.use('/trophies', require('./routes/trophies'));
   app.use('/queries', require('./routes/queries'));
-
-
 
 } 
 catch (error) {

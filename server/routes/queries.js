@@ -13,8 +13,8 @@ router.get('/most-goals', (req, res) => {
     LIMIT 1;
   `;
   db.get(query, [], (err, row) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(row);
+    if (err) return res.status(500).json({ error: err.message,query });
+    res.json({query, result:row});
   });
 });
 
@@ -27,8 +27,8 @@ router.get('/preferred-foot-right', (req, res) => {
     WHERE pa.preferred_foot = 'right';
   `;
   db.all(query, [], (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(rows);
+    if (err) return res.status(500).json({ error: err.message,query });
+    res.json({query, result:rows});
   });
 });
 
@@ -40,8 +40,8 @@ router.get('/below-age-26', (req, res) => {
     WHERE age < 26;
   `;
   db.all(query, [], (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(rows);
+    if (err) return res.status(500).json({ error: err.message,query });
+    res.json({query, result:rows});
   });
 });
 
@@ -55,9 +55,9 @@ router.get('/most-trophies', (req, res) => {
     ORDER BY total_trophies DESC
     LIMIT 1;
   `;
-  db.get(query, [], (err, row) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(row);
+  db.get(query, [], (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message,query });
+    res.json({query, result:rows});
   });
 });
 
@@ -69,9 +69,9 @@ router.get('/most-wins', (req, res) => {
     ORDER BY team_wins DESC
     LIMIT 1;
   `;
-  db.get(query, [], (err, row) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(row);
+  db.get(query, [], (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message,query });
+    res.json({query, result:rows});
   });
 });
 
@@ -82,9 +82,9 @@ router.get('/most-losses', (req, res) => {
       ORDER BY team_loses DESC
       LIMIT 1;
     `;
-    db.get(query, [], (err, row) => { // Include 'row' parameter
-      if (err) return res.status(500).json({ error: err.message });
-      res.json(row); // 'row' will now have the query result
+    db.get(query, [], (err, rows) => { // Include 'row' parameter
+      if (err) return res.status(500).json({ error: err.message,query });
+      res.json({query, result:rows});
     });
   });
   
@@ -92,16 +92,23 @@ router.get('/most-losses', (req, res) => {
 // Get the team with the most trophies
 router.get('/most-team-trophies', (req, res) => {
   const query = `
-    SELECT t.team_name, COUNT(tt.trophy_id) AS total_trophies
+  SELECT t.team_name, COUNT(tt.trophy_id) AS total_trophies
+  FROM Teams t
+  JOIN Team_Trophies tt ON t.team_id = tt.team_id
+  GROUP BY t.team_id
+  HAVING COUNT(tt.trophy_id) = (
+    SELECT MAX(total_trophies)
+  FROM (
+    SELECT COUNT(tt.trophy_id) AS total_trophies
     FROM Teams t
     JOIN Team_Trophies tt ON t.team_id = tt.team_id
     GROUP BY t.team_id
-    ORDER BY total_trophies DESC
-    LIMIT 1;
+  ) AS trophy_counts
+);
   `;
-  db.get(query, [], (err, row) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(row);
+  db.get(query, [], (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message,query });
+    res.json({query, result:rows});
   });
 });
 

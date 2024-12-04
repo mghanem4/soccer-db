@@ -1,123 +1,129 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Container, Typography, Box } from '@mui/material';
-
-// import { createTheme } from '@mui/material/styles';
-
-
+import { Button, Container, Typography, Box, Grid, Paper } from '@mui/material';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <Container maxWidth="sm" sx={{ textAlign: 'center', mt: 5 }}>
-      <Typography variant="h4" gutterBottom>
-        Welcome to Soccer Manager
-      </Typography>
-      <Typography variant="body1" gutterBottom>
-        Choose an option below to manage your data.
-      </Typography>
-      <Box sx={{ mt: 4 }}>
-        <Button
-          variant="contained"
-          color="primary"
-          fullWidth
-          sx={{ mb: 2 }}
-          onClick={() => navigate('/player-crud')}
-        >
-          Player CRUD (Create, Read, Update, Delete)
-        </Button>
-        <Button
-          variant="contained"
-          color="secondary"
-          fullWidth
-          sx={{ mb: 2 }}
+    <Container maxWidth="md" sx={{ mt: 8, textAlign: 'center' }}>
+      <Paper elevation={3} sx={{ p: 4, borderRadius: 4 }}>
+        <Typography variant="h3" gutterBottom>
+          Soccer Manager
+        </Typography>
+        <Typography variant="body1" sx={{ mb: 4, color: 'text.secondary' }}>
+          This is a soccer database web application, that is designed for data entry and viewing stats.
+          This is a part of a long term machine learning project that I am working on, and I am using this app as a starting point to display data.
 
-          onClick={() => navigate('/team-crud')}
-        >
-          Team & Trophy CRUD (Create, Read, Update, Delete)
-        </Button>
+        </Typography>
 
-        <Button
-          variant="contained"
-          color="success"
-          fullWidth
-          sx={{ mb: 2 }}
-          onClick={() => navigate('/league-crud')}
-        >
-          League & Trophy CRUD (Create, Read, Update, Delete)
-        </Button>
+        <Grid container spacing={3}>
+          {/* CRUD Buttons */}
+          <Grid item xs={12}>
+            <Typography variant="h5" sx={{ mb: 2 }}>
+              Manage Data
+            </Typography>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              size="large"
+              onClick={() => navigate('/player-crud')}
+            >
+              Player CRUD
+            </Button>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Button
+              variant="contained"
+              color="secondary"
+              fullWidth
+              size="large"
+              onClick={() => navigate('/team-crud')}
+            >
+              Team & Trophy CRUD
+            </Button>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Button
+              variant="contained"
+              color="success"
+              fullWidth
+              size="large"
+              onClick={() => navigate('/league-crud')}
+            >
+              League & Trophy CRUD
+            </Button>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Button
+              variant="contained"
+              color="info"
+              fullWidth
+              size="large"
+              onClick={() => navigate('/manager-crud')}
+            >
+              Manager CRUD
+            </Button>
+          </Grid>
 
-        <Button
-          variant="contained"
-          color="info"
-          fullWidth
-          sx={{ mb: 2 }}
-          onClick={() => navigate('/manager-crud')}
-        >
-          Manager CRUD (Create, Read, Update, Delete)
-        </Button>
+          {/* Stats Section */}
+          <Grid item xs={12}>
+            <Typography variant="h5" sx={{ mt: 4, mb: 2 }}>
+              View Stats
+            </Typography>
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <Button
+              variant="contained"
+              color="warning"
+              fullWidth
+              size="large"
+              onClick={() => navigate('/player-stats')}
+            >
+              Player Stats
+            </Button>
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <Button
+              variant="contained"
+              color="warning"
+              fullWidth
+              size="large"
+              onClick={() => navigate('/league-stats')}
+            >
+              League Stats
+            </Button>
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <Button
+              variant="contained"
+              color="warning"
+              fullWidth
+              size="large"
+              onClick={() => navigate('/team-stats')}
+            >
+              Team Stats
+            </Button>
+          </Grid>
 
-      <Typography variant="body1" gutterBottom>
-        Choose an option to view the stats.
-      </Typography>
-
-        <Button
-          variant="contained"
-          color="warning"
-          fullWidth
-          sx={{ mb: 2 }}
-          onClick={() => navigate('/player-stats')}
-        >
-          Player Stats 
-        </Button>
-
-        <Button
-          variant="contained"
-          color="warning"
-          fullWidth
-          sx={{ mb: 2 }}
-          onClick={() => navigate('/league-stats')}
-        >
-          League Stats 
-        </Button>
-
-        <Button
-          variant="contained"
-          color="warning"
-          fullWidth
-          sx={{ mb: 2 }}
-          onClick={() => navigate('/team-stats')}
-        >
-          Team Stats 
-        </Button>
-
-        <Button
-          variant="contained"
-          color="warning"
-          fullWidth
-          sx={{ mb: 2 }}
-          onClick={() => navigate('/query-page')}
-        >
-          Query Pages 
-        </Button>
-        {/* <Typography variant="body1" gutterBottom>
-        Choose an option to view database related things.
-      </Typography>
-
-      
-      <Button
-          variant="contained"
-          color="warning"
-          fullWidth
-          sx={{ mb: 2 }}
-          onClick={() => navigate('/er-model')}
-        >
-          ER Model 
-        </Button> */}
-
-
-      </Box>
+          {/* Query Page */}
+          <Grid item xs={12}>
+            <Button
+              variant="contained"
+              color="warning"
+              fullWidth
+              size="large"
+              onClick={() => navigate('/query-page')}
+              sx={{ mt: 3 }}
+            >
+              Query Pages
+            </Button>
+          </Grid>
+        </Grid>
+      </Paper>
     </Container>
   );
 };

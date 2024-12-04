@@ -3,34 +3,34 @@ const express = require('express');
 const db = require('../db');
 const router = express.Router();
 
-// Get teams with their trophies
-router.get('/', (req, res) => {
-  const query = `
-    SELECT 
-      Teams.team_id, 
-      Teams.team_name, 
-      Teams.team_wins, 
-      Teams.team_draws, 
-      Teams.team_loses, 
-      Teams.goals_scored,
-      Trophies.trophy_id, 
-      Trophies.trophy_name, 
-      Trophies.trophy_type, 
-      Team_Trophies.year_awarded
-    FROM 
-      Teams
-    LEFT JOIN 
-      Team_Trophies ON Teams.team_id = Team_Trophies.team_id
-    LEFT JOIN 
-      Trophies ON Team_Trophies.trophy_id = Trophies.trophy_id;
-  `;
-  db.all(query, [], (err, rows) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    res.json(rows);
-  });
-});
+// // Get teams with their trophies
+// router.get('/', (req, res) => {
+//   const query = `
+//     SELECT 
+//       Teams.team_id, 
+//       Teams.team_name, 
+//       Teams.team_wins, 
+//       Teams.team_draws, 
+//       Teams.team_loses, 
+//       Teams.goals_scored,
+//       Trophies.trophy_id, 
+//       Trophies.trophy_name, 
+//       Trophies.trophy_type, 
+//       Team_Trophies.year_awarded
+//     FROM 
+//       Teams
+//     LEFT JOIN 
+//       Team_Trophies ON Teams.team_id = Team_Trophies.team_id
+//     LEFT JOIN 
+//       Trophies ON Team_Trophies.trophy_id = Trophies.trophy_id;
+//   `;
+//   db.all(query, [], (err, rows) => {
+//     if (err) {
+//       return res.status(500).json({ error: err.message });
+//     }
+//     res.json(rows);
+//   });
+// });
 
 // Get all the players that play in a team using player_team table
 router.get('/:id/players', (req, res) => {

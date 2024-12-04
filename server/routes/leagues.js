@@ -36,9 +36,7 @@ router.get('/:id', (req, res) => {
 router.get('/:id/teams', (req, res) => {
   const query = `
     SELECT 
-      Teams.team_id, 
-      Teams.team_name, 
-      Team_League.league_id
+      *
     FROM 
       Teams
     LEFT JOIN 

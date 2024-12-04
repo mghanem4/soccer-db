@@ -4,25 +4,27 @@ import axios from 'axios';
 import ScrollableTable from './ScrollableTable';
 
 const QueriesPage = () => {
-  const [data, setData] = useState<any[]>([]); // Data for the table
-  const [columns, setColumns] = useState<{ id: string; label: string }[]>([]); // Columns for the table
+  const [data, setData] = useState<any[]>([]);
+  const [columns, setColumns] = useState<{ id: string; label: string }[]>([]);
   const [loading, setLoading] = useState(false);
+  const [query, setQuery] = useState<string | null>(null);
 
-  // Fetch data from the server and update table
   const fetchData = async (endpoint: string) => {
     setLoading(true);
     try {
       const response = await axios.get(`http://localhost:5000/queries/${endpoint}`);
-      const responseData = Array.isArray(response.data) ? response.data : [response.data];
+      const responseData = Array.isArray(response.data.result)
+        ? response.data.result
+        : [response.data.result];
 
       setData(responseData);
+      setQuery(response.data.query);
 
-      // Dynamically generate columns based on the first row
       if (responseData.length > 0) {
         setColumns(
           Object.keys(responseData[0]).map((key) => ({
             id: key,
-            label: key.replace(/_/g, ' ').toUpperCase(), // Format column names
+            label: key.replace(/_/g, ' ').toUpperCase(),
           }))
         );
       } else {
@@ -32,6 +34,7 @@ const QueriesPage = () => {
       console.error('Error fetching data:', error);
       setData([]);
       setColumns([]);
+      setQuery(null);
     } finally {
       setLoading(false);
     }
@@ -43,7 +46,6 @@ const QueriesPage = () => {
         Database Queries
       </Typography>
 
-      {/* Buttons for Queries */}
       <Box display="flex" gap={2} flexWrap="wrap" mb={3}>
         <Button variant="contained" onClick={() => fetchData('most-goals')}>
           Player with Most Goals
@@ -68,10 +70,19 @@ const QueriesPage = () => {
         </Button>
       </Box>
 
-      {/* Loading Indicator */}
       {loading && <CircularProgress />}
 
-      {/* ScrollableTable for Results */}
+      {query && (
+        <Box my={2} p={2} sx={{ backgroundColor: '#f9f9f9', border: '1px solid #ddd' }}>
+          <Typography variant="subtitle1">
+            <strong>Executed Query:</strong>
+          </Typography>
+          <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
+            {query}
+          </Typography>
+        </Box>
+      )}
+
       {!loading && data.length > 0 && (
         <ScrollableTable
           data={data}
@@ -84,7 +95,6 @@ const QueriesPage = () => {
         />
       )}
 
-      {/* No Results Message */}
       {!loading && data.length === 0 && <Typography>No data available.</Typography>}
     </Box>
   );

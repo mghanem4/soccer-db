@@ -1,4 +1,5 @@
 // database.js
+
 const sqlite3 = require('sqlite3').verbose();
 // const dotenv = require('dotenv');
 // const path = require('path');
