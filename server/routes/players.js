@@ -278,53 +278,44 @@ router.delete('/:id/trophies/:trophy_id', (req, res) => {
   });
 });
 
-// Delete a player and their trophies
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
   const playerId = req.params.id;
 
-  // 1: Delete trophies associated with the player
-  const deleteTrophiesQuery = 'DELETE FROM Player_Trophies WHERE player_id = ?';
-  db.run(deleteTrophiesQuery, [playerId], function (err) {
-    if (err) {
-      console.error('Error deleting player trophies:', err.message);
-      return res.status(500).json({ error: 'Failed to delete player trophies.' });
+  try {
+    // sequential careful delete, each deleting the player id without leaving null values.
+    // Delete trophies associated with the player
+    await runQuery('DELETE FROM Player_Trophies WHERE player_id = ?', [playerId]);
+
+    // Delete the player from their team
+    await runQuery('DELETE FROM Player_Team WHERE player_id = ?', [playerId]);
+
+    // Delete the player attributes
+    await runQuery('DELETE FROM Player_Attributes WHERE player_id = ?', [playerId]);
+
+    // Delete the player
+    const result = await runQuery('DELETE FROM Players WHERE player_id = ?', [playerId]);
+
+    if (result.changes === 0) {
+      return res.status(404).json({ error: 'Player not found.' });
     }
-    // 2: Delete the player from their team.
-    const deleteFromPlayerTeamQuery = 'DELETE FROM Player_Team WHERE player_id = ?';
-    db.run(deleteFromPlayerTeamQuery, [playerId], function (err) {
-      if (err) {
-        console.error('Error deleting from Player_Team:', err.message);
-        return res.status(500).json({ error: 'Failed to delete player from Player_Team.' });
-      }
-    })
 
-    // 3: Delete the player and the player attributes
-    const deletePlayerAttrQuery = 'DELETE FROM Player_Attributes WHERE player_id = ?';
-    db.run(deletePlayerAttrQuery, [playerId], function (err) {
+    res.status(200).json({ message: 'Player and their trophies deleted successfully.' });
+  } catch (err) {
+    console.error('Error deleting player:', err.message);
+    res.status(500).json({ error: 'An error occurred while deleting the player.' });
+  }
+});
+// helper functiuon
+function runQuery(query, params) {
+  return new Promise((resolve, reject) => {
+    db.run(query, params, function (err) {
       if (err) {
-        console.error('Error deleting player attributes:', err.message);
-        return res.status(500).json({ error: 'Failed to delete player attributes.' });
+        return reject(err);
       }
-      // Successful deletion
-      res.status(200).json({ message: 'Player attributes deleted successfully.' });
-    });
-        
-    // 3: Delete the player
-    const deletePlayerQuery = 'DELETE FROM Players WHERE player_id = ?';
-    db.run(deletePlayerQuery, [playerId], function (err) {
-      if (err) {
-        console.error('Error deleting player:', err.message);
-        return res.status(500).json({ error: 'Failed to delete player.' });
-      }
-
-      if (this.changes === 0) {
-        return res.status(404).json({ error: 'Player not found.' });
-      }
-
-      res.json({ message: 'Player and their trophies deleted successfully.' });
+      resolve(this); 
     });
   });
-});
+}
 
 
 // Get player stats (attributes) by player ID
