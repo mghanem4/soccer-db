@@ -42,7 +42,8 @@ router.post('/', (req, res) => {
 // Update a manager
 router.put('/:id', (req, res) => {
   const { manager_name, age, manager_country } = req.body;
-
+// I am using COALESCE to update only the fields that are provided in the request body
+// this gives the flexibility to update only the manager_name or age or manager_country or all
   const query = `
     UPDATE Managers
     SET

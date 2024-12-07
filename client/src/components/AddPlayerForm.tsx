@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { addPlayer, assignPlayerTrophy, addPlayerToTeam, getTeams } from '../api'; // Added `addPlayerToTeam` and `getTeams`
+import { addPlayer, assignPlayerTrophy, addPlayerToTeam, getTeams } from '../api'; 
 import { TextField, Button, Box, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { Trophy, Team } from '../api';
 
@@ -7,7 +7,17 @@ interface AddPlayerFormProps {
   onPlayerChange: () => void;
   trophies: Trophy[]; // List of trophies
 }
-
+{/* This is the AddPlayerForm component that is used to add a player to the database
+  It takes in the onPlayerChange function and the list of trophies as props
+  The component has the following state variables:
+  - playerName: the name of the player
+  - playerCountry: the country of the player
+  - playerTrophy: the trophy that the player is assigned to
+  - playerAge: the age of the player
+  - position: the position of the player
+  - team: the team that the player is assigned to
+  - teams: the list of teams
+  */}
 const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onPlayerChange, trophies }) => {
   const [playerName, setPlayerName] = useState('');
   const [playerCountry, setPlayerCountry] = useState('');
@@ -23,54 +33,52 @@ const AddPlayerForm: React.FC<AddPlayerFormProps> = ({ onPlayerChange, trophies 
   useEffect(() => {
     const fetchTeams = async () => {
       try {
+        // call the getTeams api function and wait for the response
         const data = await getTeams();
         setTeams(data);
       } catch (error) {
         console.error('Error fetching teams:', error);
       }
     };
-
+    // Call the fetchTeams function to get the teams
     fetchTeams();
   }, []);
 
+  {/* This function is called when the user clicks the add player button, it adds a new player to the database */}
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Validate required fields
+  
     if (!playerName || !playerCountry || !position) {
       alert('Player name, country, and position are required.');
       return;
     }
-
+  
     try {
-      // Add the player
+      // Add the player and get their ID
       const playerId = await addPlayer({
         player_name: playerName,
         player_country: playerCountry,
         age: playerAge === '' ? 0 : Number(playerAge),
         position,
       });
-
-      // Assign the trophy if selected
-      if (selectedTrophy !== '' && yearAwarded !== '') {
-        await assignPlayerTrophy(Number(playerId), Number(selectedTrophy), Number(yearAwarded));
-        alert('Trophy assigned successfully!');
-      }
-
-      // Add the player to a team if selected
+  
+      console.log('Created Player ID:', playerId); // Debug log
+  
+      // Assign the player to a team if selected
       if (selectedTeam !== '' && startDate) {
-        await addPlayerToTeam(Number(playerId), Number(selectedTeam), startDate);
+        await addPlayerToTeam(playerId, Number(selectedTeam), startDate);
         alert('Player added to team successfully!');
       }
-
+  
       alert('Player added successfully!');
-      onPlayerChange(); // Refresh player list
+      onPlayerChange(); // Refresh the player list
     } catch (error) {
       console.error('Error adding player:', error);
       alert('Failed to add player.');
     }
   };
 
+  // This is the form to add a player to the database
   return (
     <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
       <Typography variant="h5" gutterBottom>

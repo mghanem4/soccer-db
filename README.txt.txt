@@ -1,7 +1,5 @@
 # Soccer Database Project - COMP 3005 Final Project (Dec. 6th, 2024)
 
-This project aims to create a soccer database designed to track player performance, team achievements, and manager success within various leagues. Soccer teams and analysts need a reliable and flexible way to analyze historical and real-time data on players, teams, and managers. This database will help clubs and fans to understand soccer metrics at a deeper level, allowing for advanced performance analysis and decision-making. The motivation behind this project comes from the complexity of soccer statistics and my passion for my Spanish soccer club (FC Barcelona). With players moving between teams, managers coaching multiple teams over their careers, and clubs participating in multiple leagues, tracking these relationships and statistics over time becomes cumbersome. This database will solve this problem by allowing users to easily access and analyze detailed soccer statistics.
-
 This project consists of two parts:  
 1. **Client**: A React-based frontend with Material-UI (helps with responsivity of the website).  
 2. **Server**: A Node.js backend with SQLite3, using Express for routing.
@@ -49,7 +47,7 @@ npm run dev
 If not present (should be there), create a `.env` file in the root directory of the project to store environment variables.
 ```MAKEFILE
 PORT=5000
-DATABASE_FILE=./soccer.db
+DATABASE_URL=./database.sqlite
 ```
 
 ### Step 4: SQLite3 Database.

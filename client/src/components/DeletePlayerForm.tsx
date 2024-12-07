@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { deletePlayerTrophies, deletePlayer } from '../api';
 import { TextField, Button, Box, Typography } from '@mui/material';
-
+// This is the interface for the DeletePlayerFormProps
 interface DeletePlayerFormProps {
   onPlayerChange: () => void; // Callback to refresh the player list
 }
 
+// This interface is used to define the props for the DeletePlayerForm component
+
+
 const DeletePlayerForm: React.FC<DeletePlayerFormProps> = ({ onPlayerChange }) => {
   const [playerId, setPlayerId] = useState<number | ''>('');
-
+// submit the form to delete a player from the database
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -18,10 +21,7 @@ const DeletePlayerForm: React.FC<DeletePlayerFormProps> = ({ onPlayerChange }) =
     }
 
     try {
-      // Step 1: Delete the player's trophies
-      // await deletePlayerTrophies(Number(playerId));
-
-      // Step 2: Delete the player from the Players table
+// deleting the player will also handle deleting the trophies associated with the player
       await deletePlayer(Number(playerId));
 
       alert('Player and their trophies deleted successfully!');
@@ -31,7 +31,7 @@ const DeletePlayerForm: React.FC<DeletePlayerFormProps> = ({ onPlayerChange }) =
       alert('Failed to delete player.');
     }
   };
-
+// This is the form to delete a player from the database
   return (
     <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
       <Typography variant="h5" gutterBottom>

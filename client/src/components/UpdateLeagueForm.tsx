@@ -17,7 +17,7 @@ interface UpdateLeagueFormProps {
   onTrophyChange: () => void;
   trophies: Trophy[];
 }
-
+// This is the UpdateLeagueForm component that is used to update a league in the database
 const UpdateLeagueForm: React.FC<UpdateLeagueFormProps> = ({
   onLeagueChange,
   onTrophyChange,
@@ -30,6 +30,8 @@ const UpdateLeagueForm: React.FC<UpdateLeagueFormProps> = ({
   const [leagueName, setLeagueName] = useState('');
   const [leagueTrophyId, setLeagueTrophyId] = useState<number | ''>('');
 
+// This function is called when the user clicks the update league button, it updates the league in the database
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -39,6 +41,7 @@ const UpdateLeagueForm: React.FC<UpdateLeagueFormProps> = ({
     }
 
     try {
+      // Update the league
       await updateLeague(leagueId, {
         total_matches: totalMatches === '' ? undefined : totalMatches,
         total_teams: totalTeams === '' ? undefined : totalTeams,
@@ -54,7 +57,7 @@ const UpdateLeagueForm: React.FC<UpdateLeagueFormProps> = ({
       alert('Failed to update league.');
     }
   };
-
+// return the form to update a league
   return (
     <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
       <Typography variant="h5" gutterBottom>

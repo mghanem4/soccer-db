@@ -5,13 +5,15 @@ import UpdateManagerForm from './UpdateManagerForm';
 import DeleteManagerForm from './DeleteManagerForm';
 import ManagerList from './ManagerList';
 import { Container, Typography, MenuItem, Select, FormControl, InputLabel, Box } from '@mui/material';
-
+// This is the ManagerSelectionView component that is used to manage managers
+// This component is used to manage managers
 const ManagerSelectionView: React.FC = () => {
   const [managers, setManagers] = useState<Manager[]>([]); // Shared state for managers
   const [selectedAction, setSelectedAction] = useState<string | null>(null);
 
   // Fetch managers from the database
   const fetchManagers = async () => {
+    // get managers using the getManagers api function
     try {
       const data = await getManagers();
       setManagers(data);
@@ -23,7 +25,8 @@ const ManagerSelectionView: React.FC = () => {
   useEffect(() => {
     fetchManagers(); // Fetch managers on component mount
   }, []);
-
+// This is the ManagerSelectionView component that is used to manage managers
+// return the container with the manager selection view
   return (
     <Container maxWidth="md">
       <Typography variant="h4" gutterBottom textAlign="center" sx={{ marginTop: '20px' }}>

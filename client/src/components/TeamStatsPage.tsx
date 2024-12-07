@@ -5,6 +5,8 @@ import ScrollableTable from './ScrollableTable';
 import PlayerStats from './PlayerStats';
 import { Box, Typography } from '@mui/material';
 
+// This is the TeamStatsPage component that holds the ScrollableTable and PlayerStats components
+
 const TeamStatsPage: React.FC = () => {
   const [teams, setTeams] = useState<Team[]>([]);
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
@@ -13,8 +15,10 @@ const TeamStatsPage: React.FC = () => {
   const [playerStats, setPlayerStats] = useState<any | null>(null);
 
   useEffect(() => {
+
     const fetchTeams = async () => {
       try {
+        // get the teams from the api and wait for the response
         const data = await getTeams();
         setTeams(data);
       } catch (error) {
@@ -24,12 +28,13 @@ const TeamStatsPage: React.FC = () => {
 
     fetchTeams();
   }, []);
-
+// handle row click by setting the selected team and fetching the players for that team
   const handleTeamClick = async (team: Team) => {
     setSelectedTeam(team);
     setSelectedPlayer(null);
 
     try {
+      // get the players for the team and wait for the response
       const data = await getPlayersByTeam(team.team_id);
       setPlayers(data);
     } catch (error) {
@@ -37,11 +42,12 @@ const TeamStatsPage: React.FC = () => {
       setPlayers([]);
     }
   };
-
+// handle player click by setting the selected player and fetching the player stats
   const handlePlayerClick = async (player: Player) => {
     setSelectedPlayer(player);
 
     try {
+      // get the player stats and wait for the response
       const data = await getPlayerStats(player.player_id);
       if (data.length === 0) {
         alert('No stats available for this player.');
@@ -71,6 +77,7 @@ const TeamStatsPage: React.FC = () => {
     { id: 'player_team_goals' as keyof Player, label: 'Goals' },
   ];
 
+  // return the team stats page with the team data, columns, and filterBy function
   return (
     <Box sx={{ p: 4 }}>
       <Typography variant="h4" gutterBottom>

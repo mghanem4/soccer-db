@@ -3,11 +3,12 @@ import { updateTeam, stripTeamTrophy, assignTeamTrophy } from '../api';
 import { TextField, Button, Box, Typography, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import { Trophy } from '../api';
 
+// This is the interface for the UpdateTeamFormProps
 interface UpdateTeamFormProps {
-  onTeamChange: () => void; // Callback to refresh the team list
+  onTeamChange: () => void; // refresh the team list
   trophies: Trophy[]; // List of trophies available for assignment
 }
-
+// This is the UpdateTeamForm component that is used to update a team in the database
 const UpdateTeamForm: React.FC<UpdateTeamFormProps> = ({ onTeamChange, trophies }) => {
   const [teamId, setTeamId] = useState<number | ''>(''); // Team ID to update
   const [teamName, setTeamName] = useState('');
@@ -19,6 +20,7 @@ const UpdateTeamForm: React.FC<UpdateTeamFormProps> = ({ onTeamChange, trophies 
   const [yearAwarded, setYearAwarded] = useState<number | ''>(''); // Year for the assigned trophy
 
   const handleUpdateSubmit = async (e: React.FormEvent) => {
+    // Prevent the default form submission behavior
     e.preventDefault();
 
     if (teamId === '') {
@@ -27,6 +29,7 @@ const UpdateTeamForm: React.FC<UpdateTeamFormProps> = ({ onTeamChange, trophies 
     }
 
     try {
+      // Update the team using the api function
       await updateTeam(teamId, {
         team_name: teamName || undefined,
         team_wins: teamWins === '' ? undefined : Number(teamWins),
@@ -41,7 +44,7 @@ const UpdateTeamForm: React.FC<UpdateTeamFormProps> = ({ onTeamChange, trophies 
       alert('Failed to update team.');
     }
   };
-
+// Handles the assignment of a trophy to a team
   const handleAssignTrophy = async () => {
     if (teamId === '' || selectedTrophy === '' || yearAwarded === '') {
       alert('Team ID, Trophy, and Year Awarded are required.');
@@ -49,6 +52,7 @@ const UpdateTeamForm: React.FC<UpdateTeamFormProps> = ({ onTeamChange, trophies 
     }
 
     try {
+      // Assign the trophy to the team using the api function
       await assignTeamTrophy(Number(teamId), Number(selectedTrophy), Number(yearAwarded));
       alert('Trophy assigned successfully!');
       onTeamChange(); // Refresh the team list
@@ -57,7 +61,7 @@ const UpdateTeamForm: React.FC<UpdateTeamFormProps> = ({ onTeamChange, trophies 
       alert('Failed to assign trophy.');
     }
   };
-
+// Handles the stripping of a trophy from a team
   const handleStripTrophy = async () => {
     if (teamId === '' || selectedTrophy === '') {
       alert('Both Team ID and Trophy ID are required.');
@@ -65,6 +69,7 @@ const UpdateTeamForm: React.FC<UpdateTeamFormProps> = ({ onTeamChange, trophies 
     }
 
     try {
+      // Strip the trophy from the team using the api function
       await stripTeamTrophy(Number(teamId), Number(selectedTrophy));
       alert('Trophy stripped successfully!');
       onTeamChange(); // Refresh the team list
@@ -73,7 +78,7 @@ const UpdateTeamForm: React.FC<UpdateTeamFormProps> = ({ onTeamChange, trophies 
       alert('Failed to strip trophy.');
     }
   };
-
+// This is the form to update a team in the database
   return (
     <Box component="form" onSubmit={handleUpdateSubmit} sx={{ mt: 3 }}>
       <Typography variant="h5" gutterBottom>

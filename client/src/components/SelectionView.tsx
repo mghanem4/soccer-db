@@ -21,6 +21,7 @@ import {
   Paper,
 } from '@mui/material';
 
+// selection view for the players
 const SelectionView: React.FC = () => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [trophies, setTrophies] = useState<Trophy[]>([]);
@@ -30,6 +31,7 @@ const SelectionView: React.FC = () => {
   // Fetch players
   const fetchPlayers = async () => {
     try {
+      // get the players from the api and wait for the response
       const data = await getPlayers();
       setPlayers(data);
     } catch (error) {
@@ -40,6 +42,7 @@ const SelectionView: React.FC = () => {
   // Fetch individual trophies
   const fetchTrophies = async () => {
     try {
+      // get the trophies from the api and wait for the response
       const data = await getIndividualTrophies();
       setTrophies(data);
     } catch (error) {
@@ -49,6 +52,7 @@ const SelectionView: React.FC = () => {
 
   // Fetch teams
   const fetchTeams = async () => {
+    // get the teams from the api and wait for the response
     try {
       const data = await getTeams();
       setTeams(data);
@@ -63,7 +67,7 @@ const SelectionView: React.FC = () => {
     fetchTrophies();
     fetchTeams();
   }, []);
-
+// This is the SelectionView component that is used to manage players
   return (
     <Container maxWidth="lg">
       <Typography variant="h4" gutterBottom textAlign="center" sx={{ marginTop: '20px' }}>

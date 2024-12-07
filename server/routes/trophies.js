@@ -2,7 +2,7 @@ const express = require('express');
 const db = require('../db');
 const router = express.Router();
 
-// Get all trophies
+// Get all trophies using a simple SELECT * query
 router.get('/', (req, res) => {
   const query = 'SELECT * FROM Trophies';
   db.all(query, [], (err, rows) => {
@@ -14,7 +14,7 @@ router.get('/', (req, res) => {
   });
 });
 
-// Get trophies for leagues or cups
+// Get trophies for leagues or cups using a WHERE IN clause to get only trophies of type 'League' or 'Cup'
 router.get('/league-trophies', (req, res) => {
   const query = `SELECT * FROM Trophies WHERE trophy_type IN ('League', 'Cup')`;
   db.all(query, [], (err, rows) => {
@@ -28,7 +28,7 @@ router.get('/league-trophies', (req, res) => {
 
 
 
-// Add a new trophy
+// Add a new trophy to the database by inserting a new row into the Trophies table
 router.post('/', (req, res) => {
   const { trophy_name, trophy_type } = req.body;
 
@@ -58,7 +58,8 @@ router.post('/', (req, res) => {
 // Update an existing trophy
 router.put('/:id', (req, res) => {
   const { trophy_name, trophy_type } = req.body;
-
+// I am using COALESCE to update only the fields that are provided in the request body
+// this gives the flexibility to update only the trophy_name or trophy_type or both
   const query = `
     UPDATE Trophies
     SET
@@ -85,7 +86,8 @@ router.put('/:id', (req, res) => {
     res.json({ message: 'Trophy updated successfully.' });
   });
 });
-// Get only individual trophies
+
+// Get only individual trophies using a WHERE clause to get a players trophies
 router.get('/individual', (req, res) => {
   const query = 'SELECT * FROM Trophies WHERE trophy_type = "Individual"';
   db.all(query, [], (err, rows) => {
@@ -114,6 +116,7 @@ router.get('/:id', (req, res) => {
     res.json(row);
   });
 });
+// delete a trophy
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
 

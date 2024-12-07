@@ -52,6 +52,8 @@ try {
   app.use('/trophies', require('./routes/trophies'));
   app.use('/queries', require('./routes/queries'));
 
+
+
 } 
 catch (error) {
   console.error('Error loading routes:', error.message);

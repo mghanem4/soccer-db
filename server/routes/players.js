@@ -30,7 +30,7 @@ const router = express.Router();
 //     res.json(rows);
 //   });
 // });
-
+// get all players
 router.get('/', (req, res) => {
   const query = 'SELECT * FROM Players';
   db.all(query, [], (err, rows) => {
@@ -41,6 +41,27 @@ router.get('/', (req, res) => {
     res.json(rows);
   });
 });
+router.post('/:id/team', (req, res) => {
+  const { player_id, team_id, start_date } = req.body;
+
+  // Validate required fields
+  if (!player_id || !team_id || !start_date) {
+    return res.status(400).json({ error: 'player_id, team_id, and start_date are required' });
+  }
+
+  const query = `
+    INSERT INTO Player_Team (player_id, team_id, start_date)
+    VALUES (?, ?, ?)
+  `;
+
+  db.run(query, [player_id, team_id, start_date], function (err) {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    // Respond with the ID of the created entry
+    res.json({ message: 'Player successfully added to team', player_team_id: this.lastID });
+  });
+});
 
 // Update player's team
 router.put('/:id/team', (req, res) => {
@@ -49,7 +70,8 @@ router.put('/:id/team', (req, res) => {
   if (!team_id) {
     return res.status(400).json({ error: 'Team ID is required.' });
   }
-
+// I am using COALESCE to update only the fields that are provided in the request body
+// I am using ON CONFLICT DO UPDATE to update the start_date and end_date if the player is already in the team
   const query = `
     INSERT INTO Player_Team (player_id, team_id, start_date, end_date)
     VALUES (?, ?, ?, ?)
@@ -115,14 +137,13 @@ router.post('/', (req, res) => {
 });
 
 // Add a player to a team
-// Add a player to a team
-router.post('/players/:player_id/team', (req, res) => {
-  const { player_id } = req.params;
-  const { team_id, start_date, end_date, player_team_goals, player_matches, player_team_expected_goals } = req.body;
+router.post('/:player_id/team', (req, res) => {
+  const { player_id } = req.params; // Player ID from the route parameter
+  const { team_id, start_date, end_date, player_team_goals, player_matches, player_team_expected_goals } = req.body; // Team info from the request body
 
-  if (!team_id || !start_date) {
-    res.status(400).json({ error: 'Team ID and start date are required.' });
-    return;
+  // Validate required fields
+  if (!player_id || !team_id || !start_date) {
+    return res.status(400).json({ error: 'Player ID, Team ID, and Start Date are required.' });
   }
 
   const query = `
@@ -137,23 +158,29 @@ router.post('/players/:player_id/team', (req, res) => {
     ) 
     VALUES (?, ?, ?, ?, ?, ?, ?)
   `;
+
   db.run(
     query,
     [
       player_id,
       team_id,
       start_date,
-      end_date || null, // Allow null for end_date
+      end_date || null, // Allow null for optional fields
       player_team_goals || 0,
       player_matches || 0,
       player_team_expected_goals || 0.0,
     ],
     function (err) {
       if (err) {
-        res.status(500).json({ error: err.message });
-        return;
+        console.error('Database error:', err.message);
+        return res.status(500).json({ error: 'Failed to add player to team.' });
       }
-      res.json({ message: 'Player added to team successfully.', player_team_id: this.lastID });
+
+      // Respond with success and the new Player-Team ID
+      res.status(201).json({ 
+        message: 'Player added to team successfully.',
+        player_team_id: this.lastID
+      });
     }
   );
 });
@@ -163,7 +190,8 @@ router.post('/players/:player_id/team', (req, res) => {
 // Update an existing player
 router.put('/:id', (req, res) => {
   const { player_name, player_country, age, position } = req.body;
-
+// I am using COALESCE to update only the fields that are provided in the request body
+// this gives the flexibility to update only the player_name or player_country or age or position or all
   const query = `
     UPDATE Players
     SET
@@ -254,14 +282,14 @@ router.delete('/:id/trophies/:trophy_id', (req, res) => {
 router.delete('/:id', (req, res) => {
   const playerId = req.params.id;
 
-  // Step 1: Delete trophies associated with the player
+  // 1: Delete trophies associated with the player
   const deleteTrophiesQuery = 'DELETE FROM Player_Trophies WHERE player_id = ?';
   db.run(deleteTrophiesQuery, [playerId], function (err) {
     if (err) {
       console.error('Error deleting player trophies:', err.message);
       return res.status(500).json({ error: 'Failed to delete player trophies.' });
     }
-    // Step 3: Delete the player from their team.
+    // 2: Delete the player from their team.
     const deleteFromPlayerTeamQuery = 'DELETE FROM Player_Team WHERE player_id = ?';
     db.run(deleteFromPlayerTeamQuery, [playerId], function (err) {
       if (err) {
@@ -270,7 +298,18 @@ router.delete('/:id', (req, res) => {
       }
     })
 
-    // Step 3: Delete the player
+    // 3: Delete the player and the player attributes
+    const deletePlayerAttrQuery = 'DELETE FROM Player_Attributes WHERE player_id = ?';
+    db.run(deletePlayerAttrQuery, [playerId], function (err) {
+      if (err) {
+        console.error('Error deleting player attributes:', err.message);
+        return res.status(500).json({ error: 'Failed to delete player attributes.' });
+      }
+      // Successful deletion
+      res.status(200).json({ message: 'Player attributes deleted successfully.' });
+    });
+        
+    // 3: Delete the player
     const deletePlayerQuery = 'DELETE FROM Players WHERE player_id = ?';
     db.run(deletePlayerQuery, [playerId], function (err) {
       if (err) {

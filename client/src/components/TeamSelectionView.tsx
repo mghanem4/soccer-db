@@ -14,6 +14,7 @@ const TeamSelectionView: React.FC = () => {
   // Fetch teams from the database
   const fetchTeams = async () => {
     try {
+      // Call the getTeams api function and wait for the response
       const data = await getTeams();
       setTeams(data);
     } catch (error) {
@@ -24,6 +25,7 @@ const TeamSelectionView: React.FC = () => {
   // Fetch trophies from the database
   const fetchTrophies = async () => {
     try {
+      // Call the getTrophies api function and wait for the response
       const data = await getTrophies();
       setTrophies(data.filter((trophy) => trophy.trophy_type !== 'Individual')); // Exclude individual trophies
     } catch (error) {
@@ -35,7 +37,7 @@ const TeamSelectionView: React.FC = () => {
     fetchTeams(); // Fetch teams on component mount
     fetchTrophies(); // Fetch trophies on component mount
   }, []);
-
+// This is the TeamSelectionView component that is used to manage teams
   return (
     <Container maxWidth="md">
       <Typography variant="h4" gutterBottom textAlign="center" sx={{ marginTop: '20px' }}>

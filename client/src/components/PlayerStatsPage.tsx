@@ -13,6 +13,7 @@ const PlayerStatsPage: React.FC = () => {
   useEffect(() => {
     const fetchPlayers = async () => {
       try {
+        // Fetch all players and wait for the response
         const playersData = await getPlayers();
         setPlayers(playersData);
       } catch (error) {
@@ -28,6 +29,7 @@ const PlayerStatsPage: React.FC = () => {
     setSelectedPlayer(player); // Set the clicked player as selected
 
     try {
+      // Fetch stats for the selected player
       const stats = await getPlayerStats(player.player_id); // Fetch stats for the selected player
       setPlayerStats(stats); // Update state with fetched stats
     } catch (error) {
@@ -35,7 +37,7 @@ const PlayerStatsPage: React.FC = () => {
       setPlayerStats(null); // Reset stats if there is an error
     }
   };
-
+// This is the PlayerStatsPage component that holds the PlayerList and PlayerStats components
   return (
     <div>
       <h2>Player Stats Page</h2>

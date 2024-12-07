@@ -4,6 +4,8 @@ import { League, Team } from '../api'; // Import types
 import ScrollableTable from './ScrollableTable'; // Reuse the table component
 import { Box, Typography } from '@mui/material';
 
+// This is the LeagueStatsPage component that displays league stats
+
 const LeagueStatsPage: React.FC = () => {
   const [leagues, setLeagues] = useState<League[]>([]);
   const [selectedLeague, setSelectedLeague] = useState<League | null>(null);
@@ -11,6 +13,7 @@ const LeagueStatsPage: React.FC = () => {
 
   // Fetch leagues on component mount
   useEffect(() => {
+    // get leagues from the api
     const fetchLeagues = async () => {
       try {
         const data = await getLeagues();
@@ -23,11 +26,12 @@ const LeagueStatsPage: React.FC = () => {
     fetchLeagues();
   }, []);
 
-  // Handle league row click
+  // Handle league row click, fetch teams for the selected league
   const handleRowClick = async (league: League) => {
     setSelectedLeague(league);
 
     try {
+      // get the teams by league id
       const data = await getTeamsByLeague(league.league_id);
       setTeams(data);
     } catch (error) {
@@ -53,19 +57,19 @@ const LeagueStatsPage: React.FC = () => {
     { id: 'team_loses' as keyof Team, label: 'Losses' },
     { id: 'titles_won' as keyof Team, label: 'Titles Won' },
   ];
-
+// filter the league by the league name or league id
   const filterByLeague = (league: League, query: string) => {
     const nameMatches = league.league_name?.toLowerCase().includes(query) || false;
     const idMatches = league.league_id.toString().includes(query);
     return nameMatches || idMatches;
   };
-
+// filter the team by the team name or team id
   const filterByTeam = (team: Team, query: string) => {
     const nameMatches = team.team_name?.toLowerCase().includes(query) || false;
     const idMatches = team.team_id.toString().includes(query);
     return nameMatches || idMatches;
   };
-
+// return the table with the league stats
   return (
     <Box sx={{ p: 4 }}>
       <Typography variant="h4" gutterBottom>

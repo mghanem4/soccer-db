@@ -37,27 +37,20 @@ CREATE TABLE Managers (
     manager_country TEXT NOT NULL
 );
 
+
 CREATE TABLE Player_Attributes (
-    attribute_id INTEGER PRIMARY KEY AUTOINCREMENT,
     player_id INTEGER NOT NULL,
     season_year INTEGER NOT NULL,
-    penalties INTEGER DEFAULT 0,
-    positioning INTEGER DEFAULT 0,
-    interceptions INTEGER DEFAULT 0,
-    sliding_tackle INTEGER DEFAULT 0,
+    defending INTEGER DEFAULT 0,
     preferred_foot TEXT DEFAULT "right",
     attacking_work_rate TEXT,
     defensive_work_rate TEXT,
-    finishing INTEGER DEFAULT 0,
-    heading_accuracy INTEGER DEFAULT 0,
-    short_passing INTEGER DEFAULT 0,
+    passing INTEGER DEFAULT 0,
     dribbling INTEGER DEFAULT 0,
-    long_passing INTEGER DEFAULT 0,
-    ball_control INTEGER DEFAULT 0,
-    acceleration INTEGER DEFAULT 0,
-    sprint_speed INTEGER DEFAULT 0,
-    shot_power INTEGER DEFAULT 0,
-    long_shots INTEGER DEFAULT 0,
+    pace INTEGER DEFAULT 0,
+    shooting INTEGER DEFAULT 0,
+    physicality INTEGER DEFAULT 0,
+    PRIMARY KEY (player_id, season_year),
     FOREIGN KEY (player_id) REFERENCES Players(player_id)
 );
 
@@ -121,27 +114,27 @@ CREATE TABLE Manager_Team (
     PRIMARY KEY (manager_id, team_id),
     FOREIGN KEY (manager_id) REFERENCES Managers(manager_id),
     FOREIGN KEY (team_id) REFERENCES Teams(team_id)
-);
+)   ;
 
 CREATE TABLE Trophies (
     trophy_id INTEGER PRIMARY KEY AUTOINCREMENT,
     trophy_name TEXT NOT NULL,
     trophy_type TEXT NOT NULL -- e.g., "League", "Cup", "Individual"
-    
-    );
+);
 CREATE TABLE Player_Trophies (
     player_id INTEGER NOT NULL,
     trophy_id INTEGER NOT NULL,
     year_awarded INTEGER NOT NULL,
-    PRIMARY KEY (player_id, trophy_id),
+    PRIMARY KEY (player_id, trophy_id,year_awarded),
     FOREIGN KEY (player_id) REFERENCES Players(player_id),
     FOREIGN KEY (trophy_id) REFERENCES Trophies(trophy_id)
 );
+
 CREATE TABLE Team_Trophies (
     team_id INTEGER NOT NULL,
     trophy_id INTEGER NOT NULL,
     year_awarded INTEGER NOT NULL,
-    PRIMARY KEY (team_id, trophy_id),
+    PRIMARY KEY (team_id, trophy_id,year_awarded),
     FOREIGN KEY (team_id) REFERENCES Teams(team_id),
     FOREIGN KEY (trophy_id) REFERENCES Trophies(trophy_id)
 );

@@ -2,6 +2,7 @@ import React from 'react';
 import { Container, Typography } from '@mui/material';
 import LeagueSelectionView from './LeagueSelectionView';
 
+// This is the LeagueCrud component that holds the LeagueSelectionView component
 const LeagueCrud: React.FC = () => {
   return (
     <Container maxWidth="md" sx={{ mt: 5 }}>

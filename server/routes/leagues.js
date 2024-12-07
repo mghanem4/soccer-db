@@ -83,7 +83,8 @@ module.exports = router;
 // Update
 router.put('/:id', (req, res) => {
     const { total_matches, total_teams, prize, league_name,league_trophy_id } = req.body;
-  
+  // I am using COALESCE to update only the fields that are provided in the request body
+  // this gives the flexibility to update only the total_matches or total_teams or prize or league_name or all
     const query = `
       UPDATE Leagues
       SET
@@ -123,7 +124,7 @@ router.put('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
   const leagueId = req.params.id;
 
-  // Step 1: Retrieve the league trophy ID
+  // 1: Retrieve the league trophy ID
   const getLeagueTrophyQuery = 'SELECT league_trophy_id FROM Leagues WHERE league_id = ?';
   db.get(getLeagueTrophyQuery, [leagueId], (err, row) => {
     if (err) {
@@ -137,7 +138,7 @@ router.delete('/:id', (req, res) => {
 
     const trophyId = row.league_trophy_id;
 
-    // Step 2: Delete the trophy associated with the league (if exists)
+    // 2: Delete the trophy associated with the league (if exists)
     const deleteTrophyQuery = 'DELETE FROM Trophies WHERE trophy_id = ?';
     db.run(deleteTrophyQuery, [trophyId], function (err) {
       if (err) {
@@ -145,7 +146,7 @@ router.delete('/:id', (req, res) => {
         return res.status(500).json({ error: 'Failed to delete league trophy.' });
       }
 
-      // Step 3: Delete the league
+      // 3: Delete the league
       const deleteLeagueQuery = 'DELETE FROM Leagues WHERE league_id = ?';
       db.run(deleteLeagueQuery, [leagueId], function (err) {
         if (err) {

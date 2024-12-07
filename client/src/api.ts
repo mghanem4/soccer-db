@@ -4,6 +4,13 @@ import axios from 'axios';
 // Base URL for the API (backend)
 const API_BASE_URL = 'http://localhost:5000';
 
+/* There is two types of interfaces:
+
+NewObject & Object
+Basically, I am doing the auto-increment on the id, so the NewObject does not require an id.
+However, the Object does require it since you perform an update operation or a remove.
+
+ */
 
 // Define the type of a player retrieved from the database
 export interface Player {
@@ -24,22 +31,22 @@ export interface NewPlayer {
 
 // Define the type of a team  retrieved from the database
 export interface Team {
-  team_id: number; // This is included for fetched data
-  team_name: string | null; // Allow null
-  team_wins: number | null; // Allow null
-  team_draws: number | null; // Allow null
-  team_loses: number | null; // Allow null
-  goals_scored: number | null; // Allow null
+  team_id: number; 
+  team_name: string | null;
+  team_wins: number | null;
+  team_draws: number | null;
+  team_loses: number | null;
+  goals_scored: number | null;
 }
 
 
 // Define the type of a team sent to the database
 export interface NewTeam {
   team_name: string;
-  team_wins?: number; // Optional
-  team_draws?: number; // Optional
-  team_loses?: number; // Optional
-  goals_scored?: number; // Optional
+  team_wins?: number; 
+  team_draws?: number; 
+  team_loses?: number; 
+  goals_scored?: number; 
 }
 
 
@@ -81,8 +88,8 @@ export interface NewManager {
 
 // Define the type of a trophy retrieved from the database
 export interface Trophy {
-  trophy_id: number;        // Unique identifier for the trophy
-  trophy_name: string;      // Name of the trophy
+  trophy_id: number;        
+  trophy_name: string;      
   trophy_type: 'League' | 'Cup' | 'Individual'; // Trophy type: League, Cup, or Individual
 }
 
@@ -117,9 +124,10 @@ export const getPlayers = async (): Promise<Player[]> => {
 
 
 // Add a new player
-export const addPlayer = async (player: NewPlayer): Promise<void> => {
+export const addPlayer = async (player: NewPlayer): Promise<number> => {
   try {
-    await axios.post(`${API_BASE_URL}/players`, player);
+    const response = await axios.post(`${API_BASE_URL}/players`, player);
+    return response.data.player_id; 
   } catch (error) {
     console.error('Error adding player:', error);
     throw error;
@@ -127,10 +135,7 @@ export const addPlayer = async (player: NewPlayer): Promise<void> => {
 };
 
 // Update a player
-export const updatePlayer = async (
-  id: number,
-  player: Partial<Player>
-): Promise<void> => {
+export const updatePlayer = async (id: number,player: Partial<Player>): Promise<void> => {
   try {
     await axios.put(`${API_BASE_URL}/players/${id}`, player);
   } catch (error) {
@@ -172,6 +177,24 @@ export const addTeam = async (team: NewTeam): Promise<number> => {
     throw error;
   }
 };
+// Define a helper function for API calls
+export const fetchQueryData = async (endpoint: string): Promise<{ query: string; result: any[] }> => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/queries/${endpoint}`);
+    const responseData = Array.isArray(response.data.result)
+      ? response.data.result
+      : [response.data.result];
+
+    return {
+      query: response.data
+      .query,
+      result: responseData,
+    };
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    throw error;
+  }
+};
 
 // Update a team
 export const updateTeam = async (
@@ -185,7 +208,7 @@ export const updateTeam = async (
         throw error;
         }
         }
-        // Delete a team
+  // Delete a team
 export const deleteTeam = async (id: number): Promise<void> => {
   try {
     await axios.delete(`${API_BASE_URL}/teams/${id}`
@@ -335,7 +358,7 @@ export const getPlayerStats = async (playerId: number): Promise<any> => {
 };
 export const addPlayerToTeam = async (playerId: number, teamId: number, startDate: string): Promise<void> => {
   try {
-    await axios.post(`${API_BASE_URL}/player-team`, {
+    await axios.post(`${API_BASE_URL}/players/${playerId}/team`, {
       player_id: playerId,
       team_id: teamId,
       start_date: startDate,
@@ -404,10 +427,8 @@ export const updateTrophy = async (id: number, trophy: NewTrophy): Promise<void>
   }
 };
 
-/**
- * Delete a trophy
- * @param id - ID of the trophy to delete
- */
+//  Delete a trophy
+
 export const deleteTrophy = async (id: number): Promise<void> => {
   try {
     await axios.delete(`${API_BASE_URL}/trophies/${id}`);
@@ -416,7 +437,7 @@ export const deleteTrophy = async (id: number): Promise<void> => {
     throw error;
   }
 };
-
+// Fetch all temas with trophies
 export const getTeamsWithTrophies = async (): Promise<TeamWithTrophies[]> => {
   try {
     const response = await axios.get(`${API_BASE_URL}/teams`);
@@ -426,6 +447,8 @@ export const getTeamsWithTrophies = async (): Promise<TeamWithTrophies[]> => {
     throw error;
   }
 };
+
+// add a trophy to a team
 export const addTeamTrophy = async (teamId: number, trophyId: number, yearAwarded: number): Promise<void> => {
   try {
     await axios.post(`${API_BASE_URL}/teams/${teamId}/trophies`, { trophy_id: trophyId, year_awarded: yearAwarded });
@@ -434,6 +457,8 @@ export const addTeamTrophy = async (teamId: number, trophyId: number, yearAwarde
     throw error;
   }
 };
+
+// Delete a trophy from a team
 export const deleteTeamTrophy = async (teamId: number, trophyId: number): Promise<void> => {
   try {
     await axios.delete(`${API_BASE_URL}/teams/${teamId}/trophies/${trophyId}`);
@@ -465,7 +490,7 @@ export const stripTrophyFromTeam = async (trophyId: number): Promise<void> => {
     throw error;
   }
 };
-
+// Assign a trophy to a team
 export const assignTeamTrophy = async (teamId: number, trophyId: number, yearAwarded: number): Promise<void> => {
   try {
     await axios.post(`${API_BASE_URL}/teams/${teamId}/trophies`, { trophy_id: trophyId, year_awarded: yearAwarded });
@@ -476,7 +501,7 @@ export const assignTeamTrophy = async (teamId: number, trophyId: number, yearAwa
 };
 
 
-
+// Strip a trophy from a team
 export const deleteTeamTrophies = async (teamId: number): Promise<void> => {
   try {
     await axios.delete(`${API_BASE_URL}/teams/${teamId}/trophies`);
@@ -486,6 +511,7 @@ export const deleteTeamTrophies = async (teamId: number): Promise<void> => {
   }
 };
 
+// strip a trophy from a player
 export const stripPlayerTrophy = async (playerId: number, trophyId: number, yearAwarded: number): Promise<void> => {
   try {
     await axios.delete(`${API_BASE_URL}/players/${playerId}/trophies/${trophyId}`);
@@ -495,11 +521,13 @@ export const stripPlayerTrophy = async (playerId: number, trophyId: number, year
   }
 };
 
+// Fetch all individual trophies for players
 export const getIndividualTrophies = async (): Promise<Trophy[]> => {
   const response = await axios.get(`${API_BASE_URL}/trophies/individual`);
   return response.data;
 };
 
+// Assign a trophy to a player
 export const assignPlayerTrophy = async (playerId: number, trophyId: number, yearAwarded: number): Promise<void> => {
   try {
     await axios.post(`${API_BASE_URL}/players/${playerId}/trophies`, { trophy_id: trophyId, year_awarded: yearAwarded });
@@ -508,6 +536,7 @@ export const assignPlayerTrophy = async (playerId: number, trophyId: number, yea
     throw error;
   }
 };
+// delete a player trophy, this happens when u delete a player. different then removing a trophy from a player
 export const deletePlayerTrophies = async (playerId: number): Promise<void> => {
   try {
     await axios.delete(`${API_BASE_URL}/players/${playerId}/trophies`);
@@ -516,7 +545,6 @@ export const deletePlayerTrophies = async (playerId: number): Promise<void> => {
     throw error;
   }
 };
-
 
 // Strip a trophy from a team
 export const stripTeamTrophy = async (teamId: number, trophyId: number): Promise<void> => {

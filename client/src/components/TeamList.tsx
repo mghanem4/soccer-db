@@ -5,6 +5,7 @@ import { Team } from '../api';
 interface TeamListProps {
   teams: Team[];
 }
+// This is the TeamList component that displays a list of teams in a table
 
 const TeamList: React.FC<TeamListProps> = ({ teams }) => {
   const columns = [
@@ -15,13 +16,13 @@ const TeamList: React.FC<TeamListProps> = ({ teams }) => {
     { id: 'team_loses' as keyof Team, label: 'Losses' },
     { id: 'goals_scored' as keyof Team, label: 'Goals Scored' },
   ];
-
+// Filter the team by the team name or team id
   const filterBy = (team: Team, query: string) => {
     const nameMatches = team.team_name?.toLowerCase().includes(query) || false;
     const idMatches = team.team_id.toString().includes(query);
     return nameMatches || idMatches;
   };
-
+// return the scrollable table with the teams data, columns, and filterBy function
   return (
     <ScrollableTable<Team>
       data={teams}

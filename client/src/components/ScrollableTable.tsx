@@ -10,14 +10,19 @@ import {
   TextField,
   Box,
 } from '@mui/material';
-
+// inspo: https://mui.com/material-ui/react-table/
+// Define the ScrollableTableProps interface
+/* 
+Generic scrollable table component that can be used to display any type of data.
+*/
 interface ScrollableTableProps<T> {
+  // array of type T (generic class) that contains the data to be displayed
   data: T[];
   columns: { id: keyof T; label: string }[];
   filterBy: (item: T, query: string) => boolean;
   onRowClick?: (item: T) => void;
 }
-
+// table has data, columns, a filter and an optional row click
 const ScrollableTable = <T,>({
   data,
   columns,
@@ -38,7 +43,7 @@ const ScrollableTable = <T,>({
 
   return (
     <Box>
-      {/* Search Input */}
+      {/* Search Input to filter by */}
       <TextField
         label="Search"
         variant="outlined"
@@ -48,7 +53,7 @@ const ScrollableTable = <T,>({
         onChange={(e) => setSearchQuery(e.target.value.toLowerCase())}
       />
 
-      {/* Scrollable Table */}
+      {/* Scrollable Table with table row, head and body*/}
       <TableContainer component={Paper} sx={{ maxHeight: 400 }}>
         <Table stickyHeader>
           <TableHead>

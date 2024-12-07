@@ -5,14 +5,14 @@ import { TextField, Button, Box, Typography } from '@mui/material';
 interface UpdateManagerFormProps {
   onManagerChange: () => void; // Callback to refresh the manager list
 }
-
+// This interface is used to define the props for the UpdateManagerForm component
 const UpdateManagerForm: React.FC<UpdateManagerFormProps> = ({ onManagerChange }) => {
   const [managerId, setManagerId] = useState<number | ''>(''); // Manager ID to update
   const [managerName, setManagerName] = useState('');
   const [managerAge, setManagerAge] = useState(0);
   // const [age, setAge] = useState<number | ''>(''); // Optional
   const [managerCountry, setManagerCountry] = useState('');
-
+// This function is called when the user clicks the update manager button, it updates a manager in the database
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -22,6 +22,7 @@ const UpdateManagerForm: React.FC<UpdateManagerFormProps> = ({ onManagerChange }
     }
 
     try {
+      // Update the manager by calling the updateManager function from the api
       await updateManager(managerId, {
         manager_name: managerName || undefined,
         age: managerAge || undefined,
@@ -35,7 +36,7 @@ const UpdateManagerForm: React.FC<UpdateManagerFormProps> = ({ onManagerChange }
       alert('Failed to update manager.');
     }
   };
-
+// return the form to update a manager
   return (
     <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
       <Typography variant="h5" gutterBottom>

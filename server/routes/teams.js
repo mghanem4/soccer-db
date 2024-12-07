@@ -32,7 +32,7 @@ const router = express.Router();
 //   });
 // });
 
-// Get all the players that play in a team using player_team table
+// Get all the players that play in a team using player_team table using an inner join to get matching players
 router.get('/:id/players', (req, res) => {
   const query = `
     SELECT 
@@ -43,7 +43,7 @@ router.get('/:id/players', (req, res) => {
       Players.position
     FROM 
       Players
-    LEFT JOIN 
+    INNER JOIN 
       Player_Team ON Players.player_id = Player_Team.player_id
     WHERE 
       Player_Team.team_id = ?
@@ -60,10 +60,7 @@ router.get('/:id/players', (req, res) => {
 
 
 
-
-
-
-// Add a trophy to a team
+// Add a trophy to a team by inserting a new row into the Team_Trophies table
 router.post('/:id/trophies', (req, res) => {
   const { trophy_id, year_awarded } = req.body;
   const query = `
@@ -107,6 +104,7 @@ router.get('/', (req, res) => {
   });
 });
 
+
 // Get a team by ID
 router.get('/:id', (req, res) => {
   const query = 'SELECT * FROM Teams WHERE team_id = ?';
@@ -116,6 +114,27 @@ router.get('/:id', (req, res) => {
       return;
     }
     res.json(row);
+  });
+});
+router.post('/player-team', (req, res) => {
+  const { player_id, team_id, start_date } = req.body;
+
+  // Validate required fields
+  if (!player_id || !team_id || !start_date) {
+    return res.status(400).json({ error: 'player_id, team_id, and start_date are required' });
+  }
+
+  const query = `
+    INSERT INTO Player_Team (player_id, team_id, start_date)
+    VALUES (?, ?, ?)
+  `;
+
+  db.run(query, [player_id, team_id, start_date], function (err) {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    // Respond with the ID of the created entry
+    res.json({ message: 'Player successfully added to team', player_team_id: this.lastID });
   });
 });
 
@@ -139,7 +158,8 @@ router.post('/', (req, res) => {
 router.put('/:id', (req, res) => {
   const { id } = req.params; // Team ID from the URL
   const { team_name, team_wins, team_draws, team_loses, goals_scored } = req.body;
-
+// I am using COALESCE to update only the fields that are provided in the request body
+// this gives the flexibility to update only the team_name or team_wins or team_draws or team_loses or goals_scored or all
   const query = `
     UPDATE Teams
     SET
@@ -166,7 +186,7 @@ router.put('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
   const teamId = req.params.id;
 
-  // Step 1: Delete trophies associated with the team
+  // Firstly, Delete trophies associated with the team
   const deleteTrophiesQuery = 'DELETE FROM Team_Trophies WHERE team_id = ?';
   db.run(deleteTrophiesQuery, [teamId], function (err) {
     if (err) {
@@ -174,7 +194,7 @@ router.delete('/:id', (req, res) => {
       return res.status(500).json({ error: 'Failed to delete team trophies.' });
     }
 
-    // Step 2: Delete player-team associations for the team
+    // Sceondly,  Delete player-team associations for the team
     const deletePlayerTeamQuery = 'DELETE FROM Player_Team WHERE team_id = ?';
     db.run(deletePlayerTeamQuery, [teamId], function (err) {
       if (err) {
@@ -182,7 +202,7 @@ router.delete('/:id', (req, res) => {
         return res.status(500).json({ error: 'Failed to delete player-team associations.' });
       }
 
-      // Step 3: Delete the team itself
+      // Thirdly, Delete the team itself
       const deleteTeamQuery = 'DELETE FROM Teams WHERE team_id = ?';
       db.run(deleteTeamQuery, [teamId], function (err) {
         if (err) {

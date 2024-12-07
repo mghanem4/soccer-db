@@ -18,11 +18,12 @@ import {
 import { Trophy, Team } from '../api';
 
 interface UpdatePlayerFormProps {
+  
   onPlayerChange: () => void; // Callback to refresh the player list
   trophies: Trophy[]; // List of available trophies
   teams: Team[]; // List of available teams
 }
-
+// This is the UpdatePlayerForm component that is used to update a player in the database
 const UpdatePlayerForm: React.FC<UpdatePlayerFormProps> = ({
   onPlayerChange,
   trophies,
@@ -48,14 +49,15 @@ const UpdatePlayerForm: React.FC<UpdatePlayerFormProps> = ({
     }
 
     try {
+      // Update the player
       await updatePlayer(playerId, {
         player_name: playerName || null,
         player_country: playerCountry || null,
         age: playerAge === '' ? undefined : playerAge,
         position: position || null,
       });
-
       if (teamId !== '') {
+        // Update the player's team assignment
         await updatePlayerTeam(playerId, Number(teamId), startDate || undefined, endDate || undefined);
         alert('Player team updated successfully!');
       }
@@ -67,7 +69,8 @@ const UpdatePlayerForm: React.FC<UpdatePlayerFormProps> = ({
       alert('Failed to update player.');
     }
   };
-
+// This function is called when the user clicks the assign trophy button, it assigns a trophy to a player
+// It checks if the player ID, trophy, and year awarded are not empty
   const handleAssignTrophy = async () => {
     if (playerId === '' || selectedTrophy === '' || yearAwarded === '') {
       alert('Player ID, Trophy, and Year Awarded are required.');
@@ -75,6 +78,7 @@ const UpdatePlayerForm: React.FC<UpdatePlayerFormProps> = ({
     }
 
     try {
+      // Call the assignPlayerTrophy api function to assign the player to the trophy
       await assignPlayerTrophy(Number(playerId), Number(selectedTrophy), Number(yearAwarded));
       alert('Trophy assigned successfully!');
       onPlayerChange(); // Refresh the player list
@@ -83,7 +87,7 @@ const UpdatePlayerForm: React.FC<UpdatePlayerFormProps> = ({
       alert('Failed to assign trophy.');
     }
   };
-
+// This function is called when the user clicks the strip trophy button, it strips a trophy from a player
   const handleStripTrophy = async () => {
     if (playerId === '' || selectedTrophy === '' || yearAwarded === '') {
       alert('Player ID, Trophy, and Year Awarded are required.');
@@ -91,6 +95,7 @@ const UpdatePlayerForm: React.FC<UpdatePlayerFormProps> = ({
     }
 
     try {
+      // Call the stripPlayerTrophy api function to strip the trophy from the player
       await stripPlayerTrophy(Number(playerId), Number(selectedTrophy), Number(yearAwarded));
       alert('Trophy stripped successfully!');
       onPlayerChange(); // Refresh the player list
@@ -99,7 +104,7 @@ const UpdatePlayerForm: React.FC<UpdatePlayerFormProps> = ({
       alert('Failed to strip trophy.');
     }
   };
-
+// return the form to update a player
   return (
     <Box component="form" onSubmit={handleUpdateSubmit} sx={{ mt: 3 }}>
       <Typography variant="h5" gutterBottom>

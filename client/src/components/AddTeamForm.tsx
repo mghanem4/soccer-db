@@ -2,24 +2,32 @@ import React, { useState } from 'react';
 import { addTeam, assignTeamTrophy } from '../api';
 import { TextField, Button, Box, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { Trophy } from '../api';
-
+// This is the interface for the AddTeamFormProps
 interface AddTeamFormProps {
   onTeamChange: () => void;
   trophies: Trophy[]; // Add this to the props
 }
 
+{/* This is the AddTeamForm component that is used to add a team to the database
+  It takes in the onTeamChange function and the list of trophies as props
+   */
+}
+
+
+// state variables for the form fields to add a team
 const AddTeamForm: React.FC<AddTeamFormProps> = ({ onTeamChange, trophies }) => {
   const [teamName, setTeamName] = useState('');
   const [teamWins, setTeamWins] = useState<number | ''>('');
   const [teamDraws, setTeamDraws] = useState<number | ''>('');
   const [teamLoses, setTeamLoses] = useState<number | ''>('');
   const [goalsScored, setGoalsScored] = useState<number | ''>('');
-  const [selectedTrophy, setSelectedTrophy] = useState<number | ''>(''); // Trophy to assign
-  const [yearAwarded, setYearAwarded] = useState<number | ''>(''); // Year awarded for the trophy
+  const [selectedTrophy, setSelectedTrophy] = useState<number | ''>(''); 
+  const [yearAwarded, setYearAwarded] = useState<number | ''>(''); 
 
+  // This function is called when the user clicks the add team button, it adds a new team to the database
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+  // trim to not accept empty strings
     if (teamName.trim() === '') {
       alert('Team Name is required.');
       return;
@@ -35,7 +43,7 @@ const AddTeamForm: React.FC<AddTeamFormProps> = ({ onTeamChange, trophies }) => 
         goals_scored: goalsScored === '' ? 0 : Number(goalsScored),
       });
   
-      // Assign the trophy if selected
+      // Assign the trophy if selected with the generated team ID
       if (selectedTrophy !== '' && yearAwarded !== '') {
         await assignTeamTrophy(teamId, Number(selectedTrophy), Number(yearAwarded));
         alert('Trophy assigned successfully!');
@@ -49,7 +57,7 @@ const AddTeamForm: React.FC<AddTeamFormProps> = ({ onTeamChange, trophies }) => 
     }
   };
   
-
+// This is the form to add a team to the database
   return (
     <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
       <Typography variant="h5" gutterBottom>

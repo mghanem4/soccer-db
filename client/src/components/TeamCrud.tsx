@@ -2,6 +2,8 @@ import React from 'react';
 import { Container, Typography } from '@mui/material';
 import TeamSelectionView from './TeamSelectionView';
 
+// This is the TeamCrud component that holds the TeamSelectionView component
+
 const TeamCrud: React.FC = () => {
   return (
     <Container maxWidth="md" sx={{ mt: 5 }}>

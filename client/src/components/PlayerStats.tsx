@@ -10,68 +10,52 @@ import {
   Typography,
 } from '@mui/material';
 
+// Define the PlayerStatsProps interface 
+/* each stats is determined by season, later on the code will show that 
+(I apolgize for the amount of variables, it will help me later on in a future project)  */
 interface PlayerStatsProps {
   stats: {
     season_year: number;
-    penalties: number;
-    positioning: number;
-    interceptions: number;
-    sliding_tackle: number;
+    defending: number;
     preferred_foot: string;
     attacking_work_rate: string;
     defensive_work_rate: string;
-    heading_accuracy: number;
-    short_passing: number;
+    passing: number;
     dribbling: number;
-    long_passing: number;
-    ball_control: number;
-    acceleration: number;
-    sprint_speed: number;
-    shot_power: number;
-    long_shots: number;
+    pace: number;
+    shooting: number;
+    physicality: number;
   }[];
 }
 
 const PlayerStats: React.FC<PlayerStatsProps> = ({ stats }) => {
-  // Extract the stat labels
+  // create the stat labels
   const statLabels = [
-    'Penalties',
-    'Positioning',
-    'Interceptions',
-    'Sliding Tackle',
+    'Defending',
     'Preferred Foot',
     'Attacking Work Rate',
     'Defensive Work Rate',
-    'Heading Accuracy',
-    'Short Passing',
+    'Passing',
     'Dribbling',
-    'Long Passing',
-    'Ball Control',
-    'Acceleration',
-    'Sprint Speed',
-    'Shot Power',
-    'Long Shots',
+    'Pace',
+    'Shooting',
+    'Physicality',
   ];
 
   // Map the stat keys for dynamic access
   const statKeys: (keyof typeof stats[0])[] = [
-    'penalties',
-    'positioning',
-    'interceptions',
-    'sliding_tackle',
+    'defending',
     'preferred_foot',
     'attacking_work_rate',
     'defensive_work_rate',
-    'heading_accuracy',
-    'short_passing',
+    'passing',
     'dribbling',
-    'long_passing',
-    'ball_control',
-    'acceleration',
-    'sprint_speed',
-    'shot_power',
-    'long_shots',
+    'pace',
+    'shooting',
+    'physicality'
   ];
+
+  // return the table with the player stats
 
   return (
     <div>
